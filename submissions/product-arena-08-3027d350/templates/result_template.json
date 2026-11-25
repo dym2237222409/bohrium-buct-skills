@@ -1,0 +1,74 @@
+{
+  "_template_notice": "TEMPLATE ONLY — Schema reference for /app/output/result.json. Always preserve all original output_contract keys from /input/case.json and populate from actual parsed PDF evidence.",
+  "case_id": "<copied_verbatim_from_/input/case.json>",
+  "status": "success",
+  "status_reason": "Parsed all pages with digital text layer and verified table/equation coordinates.",
+  "input_identification": {
+    "case_json_path": "/input/case.json",
+    "task_md_path": "/input/task.md",
+    "source_files": [
+      {
+        "path": "<actual_pdf_path>",
+        "sha256": "<computed_sha256>",
+        "num_pages": 0,
+        "is_encrypted": false,
+        "document_mode": "digital_clean"
+      }
+    ],
+    "task_scope_and_boundaries": "<summary_of_requested_parsing_or_qa_scope>"
+  },
+  "results": {
+    "document_metadata": {
+      "title": "",
+      "authors": [],
+      "affiliations": [],
+      "abstract": "",
+      "keywords": []
+    },
+    "sections": [],
+    "tables": [],
+    "figures": [],
+    "equations": [],
+    "references": [],
+    "headers_footers_footnotes": {
+      "running_headers": [],
+      "running_footers": [],
+      "footnotes": []
+    },
+    "task_answers": []
+  },
+  "sources": [
+    {
+      "item_id": "ans_1",
+      "claim_or_field": "<field_or_conclusion>",
+      "source_file": "<actual_pdf_path>",
+      "page": 1,
+      "printed_page_label": "1",
+      "column": 1,
+      "section_path": "1 Introduction",
+      "block_id": "p001_b004",
+      "bbox": [72.0, 180.5, 295.0, 242.0],
+      "verbatim_quote": "<exact_substring_from_pdf>",
+      "extraction_method": "pymupdf_xycut"
+    }
+  ],
+  "uncertainty": {
+    "unreported_in_source": [],
+    "unverifiable_items": [],
+    "material_conflicts": [],
+    "garbled_or_low_confidence_spans": [],
+    "human_takeover_locations": []
+  },
+  "change_records": [
+    {
+      "step": "initial_checkpoint",
+      "timestamp": "2026-11-25T00:00:00Z",
+      "summary": "Initialized schema-compliant partial result.json from /input/case.json."
+    },
+    {
+      "step": "full_parse_and_verification",
+      "timestamp": "2026-11-25T00:01:00Z",
+      "summary": "Populated verified structured parsing outputs, evidence anchors, and boundary notes."
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "version": "1.0.0",
+  "description": "Protected scientific token patterns and semantic fidelity audit rules (numbers, SI units, citations, equations, negation, hedging, conditionality, causal/concessive logic).",
+  "protected_patterns": {
+    "bracket_citations": "\\[(?:\\d+\\s*[–\\-,]\\s*\\d+|\\d+(?:\\s*,\\s*\\d+)*)\\]",
+    "author_year_citations": "\\([A-Z][A-Za-z\\-]+\\s+et\\s+al\\.,?\\s*(?:19|20)\\d{2}[a-z]?(?:;\\s*[A-Z][A-Za-z\\-]+\\s+et\\s+al\\.,?\\s*(?:19|20)\\d{2}[a-z]?)*\\)",
+    "cross_references": "\\b(?:Fig\\.?|Figs\\.?|Figure|Figures|Table|Tables|Tab\\.?|Eq\\.?|Eqs\\.?|Equation|Section|Sec\\.?|Scheme|Appendix)\\s*[S]?\\d+(?:\\.\\d+)?[A-Za-z]?(?:\\([a-z]\\))?",
+    "numbers_and_ranges": "(?<![A-Za-z_])[-+]?(?:\\d+(?:,\\d{3})*(?:\\.\\d+)?|\\.\\d+)(?:\\s*[×x*]\\s*10\\^?\\{?[-+]?\\d+\\}?)?(?:\\s*%|\u2030)?(?![A-Za-z_])",
+    "inline_latex_math": "\\$\\$[^$]+\\$\\$|\\$[^$]+\\$|\\\\\\([^)]+\\\\\\)|\\\\\\[[^\\]]+\\\\\\]",
+    "dois": "\\b10\\.\\d{4,9}/[-._;()/:A-Za-z0-9]+"
+  },
+  "negation_triggers_en": [
+    "\\bnot\\b",
+    "\\bno\\b",
+    "\\bnever\\b",
+    "\\bneither\\b",
+    "\\bnor\\b",
+    "\\bwithout\\b",
+    "\\black(?:s|ed|ing)?\\b",
+    "\\babsence\\s+of\\b",
+    "\\bfail(?:s|ed|ing)?\\s+to\\b",
+    "\\bindependent\\s+of\\b",
+    "\\binsignificant\\b",
+    "\\bnegligible\\b",
+    "\\bcannot\\b",
+    "\\bunable\\s+to\\b"
+  ],
+  "negation_markers_zh": [
+    "不",
+    "未",
+    "无",
+    "非",
+    "没",
+    "莫",
+    "勿",
+    "缺乏",
+    "缺少",
+    "未能",
+    "无法",
+    "无关",
+    "忽略不计",
+    "不显著"
+  ],
+  "hedging_and_condition_rules": [
+    {
+      "id": "hedge_may_might",
+      "en_regex": "\\b(?:may|might|could|potentially|plausibly)\\b",
+      "zh_expected_any": ["可能", "或许", "有望", "潜在", "可"],
+      "zh_forbidden_overclaim": ["必然", "一定", "绝对", "证明了必然"],
+      "description": "Epistemic hedging must not be escalated into deterministic certainty."
+    },
+    {
+      "id": "condition_only_if_unless",
+      "en_regex": "\\b(?:only\\s+when|only\\s+if|unless|provided\\s+that|except\\s+when|as\\s+long\\s+as)\\b",
+      "zh_expected_any": ["仅当", "只有", "除非", "前提是", "在…条件下", "只要", "除…外"],
+      "zh_forbidden_overclaim": [],
+      "description": "Necessary/sufficient scope conditions must be explicitly preserved."
+    },
+    {
+      "id": "bound_inequality_words",
+      "en_regex": "\\b(?:at\\s+least|at\\s+most|no\\s+more\\s+than|no\\s+less\\s+than|up\\s+to|exceed(?:s|ed|ing)?)\\b",
+      "zh_expected_any": ["至少", "至多", "不超过", "不低于", "不少于", "高达", "上限", "超过", "以上", "以下", "≤", "≥"],
+      "zh_forbidden_overclaim": [],
+      "description": "Quantitative upper/lower bound qualifiers must be accurately preserved."
+    },
+    {
+      "id": "concessive_contrast",
+      "en_regex": "\\b(?:although|though|even\\s+though|despite|in\\s+spite\\s+of|whereas|nevertheless|however)\\b",
+      "zh_expected_any": ["尽管", "虽然", "即使", "然而", "但", "不过", "而", "却", "即便"],
+      "zh_forbidden_overclaim": [],
+      "description": "Concessive and contrastive logical relations must remain explicit."
+    }
+  ]
+}

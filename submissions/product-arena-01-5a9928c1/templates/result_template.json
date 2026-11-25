@@ -1,0 +1,61 @@
+{
+  "_template_notice": "TEMPLATE ONLY — Schema reference for /app/output/result.json in literature translation tasks. Always preserve all original output_contract keys from /input/case.json.",
+  "case_id": "<copied_verbatim_from_/input/case.json>",
+  "status": "success",
+  "status_reason": "Completed paragraph-aligned bilingual translation with locked glossary enforcement and fidelity verification.",
+  "input_identification": {
+    "case_json_path": "/input/case.json",
+    "task_md_path": "/input/task.md",
+    "source_files": [],
+    "translation_scope": "full_document_or_specified_range"
+  },
+  "results": {
+    "bilingual_markdown_path": "/app/output/bilingual_translation.md",
+    "bilingual_segments_path": "/app/output/bilingual_segments.json",
+    "locked_glossary_path": "/app/output/locked_glossary.json",
+    "qa_report_path": "/app/output/translation_qa_report.md",
+    "summary_metrics": {
+      "total_segments": 0,
+      "translated_segments": 0,
+      "segment_completeness_rate": 1.0,
+      "locked_glossary_terms": 0,
+      "glossary_consistency_rate": 1.0,
+      "number_citation_parity_rate": 1.0
+    },
+    "bilingual_segments": [],
+    "glossary": []
+  },
+  "sources": [
+    {
+      "item_id": "S0001",
+      "source_file": "<actual_source_file>",
+      "page": 1,
+      "printed_page_label": "1",
+      "column": 0,
+      "section_path": "Title",
+      "block_id": "p001_b001",
+      "bbox": [54.0, 58.0, 540.0, 76.0],
+      "verbatim_quote": "<original_paragraph_text>",
+      "translation_rationale": "<terminology_and_syntax_basis>"
+    }
+  ],
+  "uncertainty": {
+    "unreported_in_source": [],
+    "unverifiable_or_untranslated_spans": [],
+    "ambiguous_expressions_for_human_review": [],
+    "material_conflicts": [],
+    "human_takeover_locations": []
+  },
+  "change_records": [
+    {
+      "step": "inspect_case_initial_checkpoint",
+      "timestamp": "2026-11-25T00:00:00Z",
+      "summary": "Initialized schema-preserving partial result.json."
+    },
+    {
+      "step": "verify_and_export_bilingual",
+      "timestamp": "2026-11-25T00:02:00Z",
+      "summary": "Verified 1:1 paragraph alignment, locked glossary consistency, and number/citation/negation fidelity."
+    }
+  ]
+}

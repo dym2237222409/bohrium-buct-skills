@@ -1,0 +1,30 @@
+{
+  "_schema_notice": "Reusable schema template for locked_glossary.json entries.",
+  "glossary_version": "1.0",
+  "source_language": "en",
+  "target_language": "zh",
+  "polysemy_domain_profile": "chemical_engineering_and_catalysis",
+  "entries": [
+    {
+      "term_id": "T001",
+      "source_term": "microchannel reactor",
+      "canonical_lower": "microchannel reactor",
+      "variants": ["microchannel reactors"],
+      "target_term": "微通道反应器",
+      "origin": "paper_extracted_and_seed_verified",
+      "locked": true,
+      "occurrence_segments": ["S0001", "S0004", "S0009"],
+      "sections_present": ["Title", "1 Introduction", "3 Conclusion"],
+      "rationale": "Standard chemical engineering term; locked across Title, Introduction, and Conclusion."
+    }
+  ],
+  "polysemy_decisions": [
+    {
+      "word": "selectivity",
+      "chosen_target": "选择性",
+      "rejected_alternatives": ["选择度"],
+      "evidence_seg_id": "S0006",
+      "rationale": "Catalytic reaction context (Selectivity %)."
+    }
+  ]
+}

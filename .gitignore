@@ -1,0 +1,10 @@
+# Ignore downloaded raw task metadata and temporary artifacts
+tasks/
+*.zip
+*.log
+.env
+.env.*
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
