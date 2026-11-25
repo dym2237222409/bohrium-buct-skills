@@ -1,0 +1,72 @@
+{
+  "version": "1.0.0",
+  "description": "Standardized field dictionary for reusable Paper Cards, Section-Aligned Summaries, and Atomic Knowledge Items, explicitly distinguishing machine-verifiable fields from fields requiring human domain confirmation.",
+  "paper_card_fields": [
+    {
+      "field": "title",
+      "required": true,
+      "verification_tier": "machine_verifiable",
+      "description": "Exact paper title as printed in the source document.",
+      "anchor_requirement": "Single front-matter block anchor (e.g. P0001)."
+    },
+    {
+      "field": "authors_and_year",
+      "required": true,
+      "verification_tier": "machine_verifiable",
+      "description": "Author list and publication/preprint year (or 'not_reported' if absent).",
+      "anchor_requirement": "Front-matter or header/footer anchor."
+    },
+    {
+      "field": "research_problem_and_gap",
+      "required": true,
+      "verification_tier": "requires_human_judgment",
+      "description": "Core scientific question addressed and specific bottleneck/limitation in prior work.",
+      "anchor_requirement": "At least one Abstract or Introduction paragraph anchor."
+    },
+    {
+      "field": "datasets_materials_or_subjects",
+      "required": true,
+      "verification_tier": "machine_verifiable",
+      "description": "Datasets, chemical reagents/catalysts, biological cohorts, sample sizes, splits, or simulation benchmarks used.",
+      "anchor_requirement": "Methods/Experimental paragraph or Table anchor."
+    },
+    {
+      "field": "methodology_and_conditions",
+      "required": true,
+      "verification_tier": "machine_verifiable",
+      "description": "Key experimental protocol, model architecture, governing equations, baselines, and operating parameter ranges.",
+      "anchor_requirement": "Methods section paragraph, Table, or Equation anchor."
+    },
+    {
+      "field": "condition_bound_findings",
+      "required": true,
+      "verification_tier": "machine_verifiable",
+      "description": "List of primary quantitative/qualitative findings, each strictly paired with 'holding_preconditions' (the regime, assumptions, or parameter window required for the conclusion to hold).",
+      "anchor_requirement": "Results paragraph, Figure, or Table anchor per finding."
+    },
+    {
+      "field": "limitations_and_open_questions",
+      "required": true,
+      "verification_tier": "requires_human_judgment",
+      "description": "Separates 'author_stated_limitations' (grounded in Discussion/Limitations) from 'unreported_or_missing_controls' (identified boundary gaps).",
+      "anchor_requirement": "Discussion/Conclusion anchor for author-stated items; explicit scope check note for unreported items."
+    }
+  ],
+  "section_summary_fields": [
+    {"field": "section_id", "verification_tier": "machine_verifiable", "description": "Exact ID matching section_skeleton.json (e.g. SEC01)."},
+    {"field": "heading", "verification_tier": "machine_verifiable", "description": "Original section number and title from paper."},
+    {"field": "section_role_and_purpose", "verification_tier": "requires_human_judgment", "description": "Why this section exists in the paper's argument chain."},
+    {"field": "methods_or_arguments", "verification_tier": "machine_verifiable", "description": "Key derivations, experimental setups, or analytical steps in this section."},
+    {"field": "findings_and_conditions", "verification_tier": "machine_verifiable", "description": "Concrete results established in this section + conditions."},
+    {"field": "logical_bridge_to_next", "verification_tier": "requires_human_judgment", "description": "How this section motivates or constrains the next section."},
+    {"field": "evidence_anchors", "verification_tier": "machine_verifiable", "description": "List of dereferenceable anchor IDs (Pxxxx / TABxx / FIGxx / EQxx) within this section's page span."}
+  ],
+  "knowledge_item_types": [
+    "concept",
+    "variable_or_symbol",
+    "method_or_protocol",
+    "finding_with_condition",
+    "dataset_or_material",
+    "limitation"
+  ]
+}

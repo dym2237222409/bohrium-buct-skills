@@ -1,0 +1,63 @@
+{
+  "_schema_notice": "Input schema for structured_notes_draft.json authored by the Agent after reading section_skeleton.json and anchor_registry.json, then compiled & verified by compile_and_verify_notes.py.",
+  "paper_card": {
+    "title": "<exact_paper_title>",
+    "authors_and_year": "<authors_and_year_or_not_reported>",
+    "venue_or_doi": "<doi_or_venue_or_not_reported>",
+    "research_problem_and_gap": {
+      "summary": "<problem_and_gap>",
+      "anchors": ["P0002", "P0004"]
+    },
+    "datasets_materials_or_subjects": {
+      "summary": "<materials_datasets_sample_sizes>",
+      "anchors": ["P0006", "TAB01"]
+    },
+    "methodology_and_conditions": {
+      "summary": "<core_method_equations_operating_regime>",
+      "key_parameters": [
+        {"name": "temperature", "value": "240-260 C", "anchor": "TAB01"}
+      ],
+      "anchors": ["P0006", "EQ01"]
+    },
+    "condition_bound_findings": [
+      {
+        "finding_id": "F01",
+        "claim": "<main_quantitative_or_qualitative_finding>",
+        "quantitative_metrics": ["96.1%", "260 C"],
+        "holding_preconditions": "<explicit_experimental_or_theoretical_conditions_for_claim_to_hold>",
+        "anchors": ["P0009", "TAB01"]
+      }
+    ],
+    "limitations_and_open_questions": {
+      "author_stated_limitations": [
+        {"point": "<stated_limitation>", "anchors": ["P0010"]}
+      ],
+      "unreported_or_missing_controls": [
+        {"field": "long_term_catalyst_deactivation_beyond_50h", "checked_scope": "All sections p.1-2"}
+      ]
+    }
+  },
+  "section_summaries": [
+    {
+      "section_id": "SEC01",
+      "heading": "1 Introduction",
+      "section_role_and_purpose": "<purpose>",
+      "methods_or_arguments": "<arguments>",
+      "findings_and_conditions": "<findings>",
+      "logical_bridge_to_next": "<how_it_leads_to_SEC02>",
+      "evidence_anchors": ["P0004", "EQ01"]
+    }
+  ],
+  "knowledge_items": [
+    {
+      "type": "variable_or_symbol",
+      "canonical_name": "Effective Rate Constant",
+      "aliases": ["k_eff", "apparent rate constant"],
+      "definition_or_statement": "First-order effective catalytic rate constant governed by Arrhenius relation k_eff = k_0 * exp(-E_a / (R*T)).",
+      "conditions_or_units": "s^-1, valid under isothermal laminar flow",
+      "tags": ["kinetics", "rate-constant"],
+      "verification_tier": "machine_verifiable",
+      "anchors": ["EQ01", "P0004"]
+    }
+  ]
+}

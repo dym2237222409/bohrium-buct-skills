@@ -1,0 +1,47 @@
+{
+  "_template_notice": "TEMPLATE ONLY — Reference structure for /app/output/result.json. Always preserve all original output_contract fields from /input/case.json.",
+  "case_id": "<copied_from_/input/case.json>",
+  "status": "success",
+  "status_reason": "Generated section-aligned structured notes, premise-bound paper card, and deduplicated knowledge items with 100% verified source anchors.",
+  "input_identification": {
+    "case_json_path": "/input/case.json",
+    "task_md_path": "/input/task.md",
+    "source_files": []
+  },
+  "results": {
+    "structured_notes_markdown_path": "/app/output/structured_notes.md",
+    "knowledge_items_jsonl_path": "/app/output/knowledge_items.jsonl",
+    "paper_card_csv_path": "/app/output/paper_card.csv",
+    "verification_report_path": "/app/output/notes_verification_report.md",
+    "paper_card": {},
+    "section_summaries": [],
+    "knowledge_items": [],
+    "verification_metrics": {
+      "sections_aligned_ratio": 1.0,
+      "anchors_cited": 0,
+      "anchors_resolved_ratio": 1.0,
+      "numeric_claims_verified_ratio": 1.0,
+      "deduplicated_knowledge_items": 0
+    }
+  },
+  "sources": [
+    {
+      "anchor_id": "P0004",
+      "source_file": "<actual_pdf_path>",
+      "page": 1,
+      "printed_page_label": "1",
+      "column": 1,
+      "section_path": "1 Introduction",
+      "bbox": [54.0, 200.0, 286.0, 250.0],
+      "verbatim_quote": "<exact_source_excerpt>"
+    }
+  ],
+  "uncertainty": {
+    "unreported_in_source": [],
+    "unverifiable_items": [],
+    "material_conflicts": [],
+    "human_confirmation_fields": [],
+    "human_takeover_locations": []
+  },
+  "change_records": []
+}

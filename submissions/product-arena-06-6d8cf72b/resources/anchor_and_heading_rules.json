@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0",
+  "description": "Anchor ID syntax, bilingual academic section detection rules, and linguistic cues for precondition/assumption/limitation extraction.",
+  "anchor_syntax": {
+    "paragraph": "P\\d{4}",
+    "table": "TAB\\d{2}",
+    "figure": "FIG\\d{2}",
+    "equation": "EQ\\d{2}",
+    "inline_citation_tag": "\\[A:(P\\d{4}|TAB\\d{2}|FIG\\d{2}|EQ\\d{2})\\]"
+  },
+  "canonical_headings": [
+    "abstract", "introduction", "background", "related work", "preliminaries",
+    "theory", "theoretical framework", "problem formulation", "model",
+    "materials and methods", "methods", "methodology", "experimental", "experimental section",
+    "experimental setup", "datasets", "implementation details",
+    "results", "results and discussion", "evaluation", "experiments", "ablation study",
+    "discussion", "limitations", "conclusion", "conclusions", "summary and outlook",
+    "acknowledgments", "acknowledgements", "appendix", "references", "bibliography",
+    "摘要", "引言", "前言", "研究背景", "相关工作", "理论基础", "模型与方法",
+    "材料与方法", "实验部分", "实验方法", "研究方法", "结果与讨论", "实验结果",
+    "消融实验", "讨论", "局限性", "结论", "总结与展望", "致谢", "附录", "参考文献"
+  ],
+  "numbered_heading_patterns": [
+    "^(?P<num>\\d+(?:\\.\\d+){0,3})\\.?\\s+(?P<title>[A-Z\\u4e00-\\u9fff][^\\n]{1,120})$",
+    "^(?P<num>[IVX]{1,5})\\.\\s+(?P<title>[A-Z\\u4e00-\\u9fff][^\\n]{1,120})$",
+    "^(?P<num>Appendix\\s+[A-Z0-9]+|附录\\s*[A-Z0-9一二三四五]*)[:.\\s]+(?P<title>[^\\n]{1,120})$"
+  ],
+  "precondition_and_scope_cues": [
+    "\\b(?:under|at|within|when|only\\s+when|only\\s+if|provided\\s+that|assuming|subject\\s+to|given\\s+that|in\\s+the\\s+range\\s+of|for\\s+temperatures?|at\\s+pH)\\b",
+    "(?:在.{1,25}(?:条件下|前提下|范围内|温度下|压力下)|仅当|假设|假定|当且仅当)"
+  ],
+  "limitation_cues": [
+    "\\b(?:limitation|limited\\s+to|however|nevertheless|fails?\\s+to|cannot|does\\s+not\\s+account\\s+for|future\\s+work|remain(?:s)?\\s+unclear|bottleneck|drawback)\\b",
+    "(?:局限|不足|尚未|未能|有待进一步|仅适用于|无法处理)"
+  ]
+}
