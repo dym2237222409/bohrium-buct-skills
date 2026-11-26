@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "description": "Reusable grouping axes, comparison matrix dimensions, and citation style conventions for Related Work organization.",
+  "recommended_grouping_axes": [
+    {
+      "axis_id": "problem_setting",
+      "label_zh": "问题设定与输入假设",
+      "label_en": "Problem Formulation & Input Assumptions",
+      "when_to_use": "Use when prior studies solve distinct sub-problems, supervision regimes, or boundary conditions."
+    },
+    {
+      "axis_id": "method_route",
+      "label_zh": "核心方法与技术路线",
+      "label_en": "Methodological Paradigm & Technical Route",
+      "when_to_use": "Use when prior studies differ in modeling mechanism, physical/chemical principle, or algorithmic family."
+    },
+    {
+      "axis_id": "data_and_eval",
+      "label_zh": "数据规模与评价方式",
+      "label_en": "Data Regime & Evaluation Protocol",
+      "when_to_use": "Use when conclusions diverge due to benchmark choice, operating conditions, or measurement metrics."
+    },
+    {
+      "axis_id": "tradeoff_regime",
+      "label_zh": "性能-成本与适用条件权衡",
+      "label_en": "Accuracy-Efficiency & Operating-Window Tradeoffs",
+      "when_to_use": "Use when competing approaches excel in mutually exclusive regimes (e.g., high accuracy vs. low latency)."
+    }
+  ],
+  "mandatory_work_comparison_fields": [
+    "ref_id",
+    "core_method",
+    "key_finding",
+    "applicable_condition",
+    "limitation",
+    "source_locator"
+  ],
+  "citation_styles": {
+    "latex-cite": {
+      "in_text_pattern": "\\\\cite[a-zA-Z*]*\\{([^}]+)\\}",
+      "example": "\\cite{smith2023catalyst}"
+    },
+    "pandoc-key": {
+      "in_text_pattern": "\\[@([A-Za-z0-9_.:-]+(?:\\s*;\\s*@[A-Za-z0-9_.:-]+)*)\\]",
+      "example": "[@smith2023catalyst]"
+    },
+    "numeric": {
+      "in_text_pattern": "\\[(\\d+(?:\\s*[-–,]\\s*\\d+)*)\\]",
+      "example": "[1, 3]"
+    },
+    "author-year": {
+      "in_text_pattern": "\\(([A-Z][A-Za-z\\-\\u4e00-\\u9fa5\\s.&]+?,\\s*(?:19|20)\\d{2}[a-z]?(?:;\\s*[A-Z][A-Za-z\\-\\u4e00-\\u9fa5\\s.&]+?,\\s*(?:19|20)\\d{2}[a-z]?)*)\\)",
+      "example": "(Smith et al., 2023)"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "case_id": "<copied_verbatim_from_/input/case.json>",
+  "status": "completed",
+  "skill_name": "scipdf-latex-builder-auditor",
+  "deliverables": {
+    "main_tex": "main.tex",
+    "compiled_pdf": null,
+    "preview_images": [],
+    "changes_diff": "changes.diff",
+    "build_manifest_json": "build_manifest.json",
+    "reproduce_script": "reproduce_build.sh",
+    "audit_report_md": "audit_report.md"
+  },
+  "summary": {
+    "engine_used": null,
+    "compiled_successfully": false,
+    "converged": false,
+    "static_errors": 0,
+    "compile_fatal_errors": 0,
+    "unresolved_citations": 0,
+    "unresolved_references": 0,
+    "overfull_hbox_over_10pt": 0
+  },
+  "sources": [],
+  "uncertainty": [],
+  "change_records": []
+}

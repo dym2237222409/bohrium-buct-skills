@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "description": "Six-element completeness checklist and boilerplate limitation anti-patterns for Methods & Experiments writing.",
+  "six_elements": [
+    {
+      "id": "method_steps",
+      "label_zh": "方法步骤（有序可执行）",
+      "required_subfields": ["step_id", "name", "inputs", "operation", "outputs", "decision_or_stop_rule", "source_locator"]
+    },
+    {
+      "id": "experimental_setup",
+      "label_zh": "实验设置（训练/验证/测试与软硬件环境）",
+      "required_subfields": ["training", "validation", "testing", "hardware", "software_versions", "random_seeds", "repeat_count"]
+    },
+    {
+      "id": "parameter_table",
+      "label_zh": "参数与来源（名称/取值/单位/作用对象/来源）",
+      "required_subfields": ["name", "value", "unit", "target_component", "source_locator", "verification_status"]
+    },
+    {
+      "id": "datasets",
+      "label_zh": "数据集与划分（名称/版本/规模/预处理/划分比例与用途）",
+      "required_subfields": ["name", "version", "size", "preprocessing", "split_strategy", "subset_roles"]
+    },
+    {
+      "id": "baselines",
+      "label_zh": "对照实验（基线版本/同预算核验/评价指标/统计方式）",
+      "required_subfields": ["name", "version", "same_budget_verified", "metrics", "statistical_test"]
+    },
+    {
+      "id": "reproducibility_and_limitations",
+      "label_zh": "可复现性清单与具体失效场景限制条件",
+      "required_subfields": ["code_version", "environment", "commands", "seeds", "data_access", "limitations"]
+    }
+  ],
+  "boilerplate_limitation_patterns": {
+    "zh": [
+      "未来工作将进一步(?:提升|改进|优化)性能",
+      "仍有一定的(?:改进|提升)空间",
+      "将在后续研究中继续探索",
+      "受限于时间与算力"
+    ],
+    "en": [
+      "future work will further improve performance",
+      "there is still room for improvement",
+      "we leave .*? for future work",
+      "due to limited time and resources"
+    ]
+  },
+  "missing_markers": [
+    "[MISSING_FROM_MATERIALS",
+    "[NEEDS_AUTHOR_CONFIRMATION",
+    "UNKNOWN",
+    "NOT_SPECIFIED"
+  ]
+}

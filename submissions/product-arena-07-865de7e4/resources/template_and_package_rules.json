@@ -1,0 +1,52 @@
+{
+  "version": "1.0.0",
+  "description": "Package load-order constraints, TeX engine selection rules, and template hygiene checks.",
+  "package_order_rules": [
+    {
+      "rule_id": "hyperref_after_amsmath",
+      "first": "amsmath",
+      "second": "hyperref",
+      "severity": "warning",
+      "reason": "amsmath should generally be loaded before hyperref to avoid equation anchor and \\eqref link issues."
+    },
+    {
+      "rule_id": "cleveref_after_hyperref",
+      "first": "hyperref",
+      "second": "cleveref",
+      "severity": "error",
+      "reason": "cleveref MUST be loaded AFTER hyperref; loading hyperref after cleveref breaks \\cref/\\Cref formatting and links."
+    },
+    {
+      "rule_id": "algorithm_after_hyperref",
+      "first": "hyperref",
+      "second": "algorithm",
+      "severity": "warning",
+      "reason": "float/algorithm loaded before hyperref can trigger destination name warnings; load hyperref before algorithm when compatible."
+    }
+  ],
+  "xelatex_indicators": [
+    "\\usepackage{ctex}",
+    "\\usepackage{xeCJK}",
+    "\\usepackage{fontspec}",
+    "\\documentclass{ctexart}",
+    "\\documentclass{ctexbook}",
+    "\\documentclass{ctexrep}",
+    "\\setCJKmainfont",
+    "\\setmainfont"
+  ],
+  "biber_indicators": [
+    "biblatex",
+    "\\addbibresource",
+    "\\printbibliography"
+  ],
+  "template_required_elements": [
+    "\\documentclass",
+    "\\begin{document}",
+    "\\end{document}"
+  ],
+  "discouraged_table_hacks": [
+    "\\resizebox{\\textwidth}{!}",
+    "\\resizebox{\\linewidth}{!}",
+    "\\scalebox{"
+  ]
+}

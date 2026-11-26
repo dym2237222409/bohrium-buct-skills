@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MethodsAndExperimentsPlan",
+  "type": "object",
+  "required": [
+    "case_id",
+    "language",
+    "method_steps",
+    "experimental_setup",
+    "parameter_table",
+    "datasets",
+    "baselines",
+    "reproducibility_checklist",
+    "limitations",
+    "conflict_resolutions",
+    "author_questions",
+    "prose_sections",
+    "change_records"
+  ],
+  "properties": {
+    "case_id": { "type": "string" },
+    "language": { "type": "string", "enum": ["zh", "en", "bilingual"] },
+    "target_format": { "type": "string", "enum": ["markdown", "latex", "both"] },
+    "method_steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["step_id", "name", "inputs", "operation", "outputs", "decision_or_stop_rule", "source_locator"],
+        "properties": {
+          "step_id": { "type": "string" },
+          "name": { "type": "string" },
+          "inputs": { "type": "string" },
+          "operation": { "type": "string" },
+          "outputs": { "type": "string" },
+          "decision_or_stop_rule": { "type": "string" },
+          "source_locator": { "type": "string" }
+        }
+      }
+    },
+    "experimental_setup": {
+      "type": "object",
+      "required": ["training", "validation", "testing", "hardware", "software_versions", "random_seeds", "repeat_count"],
+      "properties": {
+        "training": { "type": "string" },
+        "validation": { "type": "string" },
+        "testing": { "type": "string" },
+        "hardware": { "type": "string" },
+        "software_versions": { "type": "array", "items": { "type": "string" } },
+        "random_seeds": { "type": "string" },
+        "repeat_count": { "type": "string" },
+        "source_locators": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "parameter_table": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "canonical_key", "value", "unit", "target_component", "source_locator", "verification_status"],
+        "properties": {
+          "name": { "type": "string" },
+          "canonical_key": { "type": "string" },
+          "value": { "type": "string" },
+          "unit": { "type": "string" },
+          "target_component": { "type": "string" },
+          "source_locator": { "type": "string" },
+          "verification_status": { "type": "string", "enum": ["verified", "conflict_resolved", "needs_author_confirmation"] }
+        }
+      }
+    },
+    "datasets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "version", "size", "preprocessing", "split_strategy", "subset_roles", "source_locator"],
+        "properties": {
+          "name": { "type": "string" },
+          "version": { "type": "string" },
+          "size": { "type": "string" },
+          "preprocessing": { "type": "string" },
+          "split_strategy": { "type": "string" },
+          "subset_roles": { "type": "string" },
+          "source_locator": { "type": "string" }
+        }
+      }
+    },
+    "baselines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "version", "same_budget_verified", "metrics", "statistical_test", "source_locator"],
+        "properties": {
+          "name": { "type": "string" },
+          "version": { "type": "string" },
+          "same_budget_verified": { "type": "string" },
+          "metrics": { "type": "string" },
+          "statistical_test": { "type": "string" },
+          "source_locator": { "type": "string" }
+        }
+      }
+    },
+    "reproducibility_checklist": {
+      "type": "object",
+      "required": ["code_version", "environment", "commands", "seeds", "data_access"],
+      "properties": {
+        "code_version": { "type": "string" },
+        "environment": { "type": "string" },
+        "commands": { "type": "array", "items": { "type": "string" } },
+        "seeds": { "type": "string" },
+        "data_access": { "type": "string" }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["failure_regime", "trigger_condition", "applicable_scope", "source_basis"],
+        "properties": {
+          "failure_regime": { "type": "string" },
+          "trigger_condition": { "type": "string" },
+          "applicable_scope": { "type": "string" },
+          "source_basis": { "type": "string" }
+        }
+      }
+    },
+    "conflict_resolutions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["canonical_key", "conflicting_values", "resolution", "adopted_value"],
+        "properties": {
+          "canonical_key": { "type": "string" },
+          "conflicting_values": { "type": "array", "items": { "type": "string" } },
+          "resolution": { "type": "string" },
+          "adopted_value": { "type": "string" }
+        }
+      }
+    },
+    "author_questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["element", "gap_or_conflict", "question"],
+        "properties": {
+          "element": { "type": "string" },
+          "gap_or_conflict": { "type": "string" },
+          "question": { "type": "string" }
+        }
+      }
+    },
+    "prose_sections": {
+      "type": "object",
+      "required": ["method_steps", "experimental_setup", "datasets_and_splits", "baselines_and_evaluation", "reproducibility_and_limitations"],
+      "properties": {
+        "method_steps": { "type": "string" },
+        "experimental_setup": { "type": "string" },
+        "datasets_and_splits": { "type": "string" },
+        "baselines_and_evaluation": { "type": "string" },
+        "reproducibility_and_limitations": { "type": "string" }
+      }
+    },
+    "change_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["section", "change", "reason"],
+        "properties": {
+          "section": { "type": "string" },
+          "change": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    }
+  }
+}

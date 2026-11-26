@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LaTeXReproducibleBuildManifest",
+  "type": "object",
+  "required": [
+    "case_id",
+    "main_tex",
+    "engine_used",
+    "engine_version",
+    "bib_tool_used",
+    "compile_passes",
+    "converged",
+    "fatal_error_count",
+    "warning_count",
+    "diagnostics",
+    "static_audit",
+    "preview_images",
+    "output_hashes_sha256"
+  ],
+  "properties": {
+    "case_id": { "type": "string" },
+    "main_tex": { "type": "string" },
+    "engine_used": { "type": ["string", "null"] },
+    "engine_version": { "type": ["string", "null"] },
+    "bib_tool_used": { "type": ["string", "null"] },
+    "compile_passes": { "type": "array", "items": { "type": "object" } },
+    "converged": { "type": "boolean" },
+    "fatal_error_count": { "type": "integer" },
+    "warning_count": { "type": "integer" },
+    "diagnostics": { "type": "array", "items": { "type": "object" } },
+    "static_audit": { "type": "object" },
+    "preview_images": { "type": "array", "items": { "type": "string" } },
+    "output_hashes_sha256": { "type": "object" }
+  }
+}

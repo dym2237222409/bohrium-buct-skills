@@ -1,0 +1,87 @@
+{
+  "version": "1.0.0",
+  "description": "Lexicon for detecting empty background clichés, chronological paper-by-paper dumps, and unsupported overclaims in Introduction and Related Work drafts.",
+  "empty_background_cliches": {
+    "zh": [
+      "近年来.*?受到广泛关注",
+      "随着.*?的快速发展",
+      "随着人工智能的飞速发展",
+      "在当今社会.*?扮演着重要角色",
+      "引起了学术界和工业界的广泛兴趣",
+      "已经成为一个热点问题",
+      "具有极其重要的意义"
+    ],
+    "en": [
+      "with the rapid development of",
+      "in recent years,? .*? has attracted (?:widespread|increasing|great) attention",
+      "plays? a (?:vital|crucial|pivotal|important) role in",
+      "has become a hot (?:topic|research area)",
+      "is of great significance",
+      "has witnessed tremendous progress"
+    ]
+  },
+  "chronological_listing_markers": {
+    "zh": [
+      "首先，[\\u4e00-\\u9fa5A-Za-z]+等人",
+      "其次，[\\u4e00-\\u9fa5A-Za-z]+等人",
+      "再次，[\\u4e00-\\u9fa5A-Za-z]+等人",
+      "此外，[\\u4e00-\\u9fa5A-Za-z]+等人.*?提出",
+      "最后，[\\u4e00-\\u9fa5A-Za-z]+等人"
+    ],
+    "en": [
+      "first(?:ly)?,? [A-Z][a-z]+ et al\\.",
+      "second(?:ly)?,? [A-Z][a-z]+ et al\\.",
+      "third(?:ly)?,? [A-Z][a-z]+ et al\\.",
+      "in \\d{4},? [A-Z][a-z]+ et al\\..*?in \\d{4},? [A-Z][a-z]+ et al\\."
+    ]
+  },
+  "overclaim_patterns": {
+    "zh": [
+      "首次彻底解决",
+      "完全克服了所有",
+      "在所有场景下均优于",
+      "证明了.*?普遍适用",
+      "绝对领先",
+      "完美解决"
+    ],
+    "en": [
+      "completely solves? all",
+      "proves? universal(?:ly)?",
+      "outperforms? all existing methods in every",
+      "the first work ever to",
+      "perfectly resolves?",
+      "eliminates? all limitations"
+    ]
+  },
+  "comparative_synthesis_signals": {
+    "zh": [
+      "相比之下",
+      "然而",
+      "与之不同",
+      "尽管.*?但",
+      "共同局限",
+      "权衡",
+      "在.*?条件下",
+      "适用范围",
+      "两类方法"
+    ],
+    "en": [
+      "in contrast",
+      "however",
+      "unlike",
+      "whereas",
+      "trade-?off",
+      "shared limitation",
+      "under .*? conditions",
+      "compared with",
+      "while .*? achieve"
+    ]
+  },
+  "honest_uncertainty_markers": [
+    "[AUTHOR_JUDGMENT]",
+    "[NEEDS_EVIDENCE]",
+    "[NEEDS_AUTHOR_CONFIRMATION]",
+    "[CITATION_NEEDED",
+    "[UNVERIFIED_REF"
+  ]
+}

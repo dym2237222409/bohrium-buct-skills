@@ -1,0 +1,24 @@
+{
+  "case_id": "<copied_verbatim_from_/input/case.json>",
+  "status": "completed",
+  "skill_name": "scipdf-methods-experiments-writer",
+  "deliverables": {
+    "manuscript_md": "methods_and_experiments.md",
+    "manuscript_tex": null,
+    "parameter_table_md": "parameter_table.md",
+    "reproducibility_and_questions_md": "reproducibility_and_questions.md",
+    "fact_provenance_json": "fact_provenance.json"
+  },
+  "summary": {
+    "method_steps_count": 0,
+    "parameters_grounded": 0,
+    "conflicts_detected": 0,
+    "conflicts_disclosed": 0,
+    "author_questions_count": 0,
+    "audit_passed": true
+  },
+  "sources": [],
+  "uncertainty": [],
+  "change_records": [],
+  "audit_gates": {}
+}

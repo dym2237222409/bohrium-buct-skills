@@ -1,0 +1,116 @@
+{
+  "version": "1.0.0",
+  "description": "Structured root-cause diagnostic rules for LaTeX, BibTeX, and Biber log parsing.",
+  "error_categories": [
+    {
+      "category": "missing_package_or_cls",
+      "patterns": [
+        "LaTeX Error: File `([^']+)' not found",
+        "! LaTeX Error: File `([^']+)' not found"
+      ],
+      "is_cascade_symptom": false,
+      "fix_hint": "Verify whether the missing .sty/.cls exists locally or via kpsewhich; copy local template files or replace with an installed equivalent if allowed by task instructions."
+    },
+    {
+      "category": "missing_font_or_cjk",
+      "patterns": [
+        "fontspec Error: The font \"([^\"]+)\" cannot be found",
+        "Package inputenc Error: Unicode character",
+        "Fatal Package fontspec Error: The fontspec package requires either XeTeX or LuaTeX"
+      ],
+      "is_cascade_symptom": false,
+      "fix_hint": "Switch engine to xelatex/lualatex for Unicode/CJK/fontspec documents, or map fontspec font names to fonts actually installed in the environment."
+    },
+    {
+      "category": "undefined_control_sequence",
+      "patterns": [
+        "Undefined control sequence\\."
+      ],
+      "is_cascade_symptom": false,
+      "fix_hint": "Check macro spelling or load the defining package (e.g., amsmath, amssymb, booktabs, graphicx, siunitx, hyperref)."
+    },
+    {
+      "category": "environment_mismatch",
+      "patterns": [
+        "LaTeX Error: \\\\begin\\{([^}]+)\\} on input line \\d+ ended by \\\\end\\{([^}]+)\\}",
+        "LaTeX Error: Environment ([^ ]+) undefined",
+        "Emergency stop"
+      ],
+      "is_cascade_symptom": false,
+      "fix_hint": "Balance matching \\begin{env}...\\end{env} pairs and ensure required math/table packages (amsmath, tabularx, longtable, algorithm2e) are loaded."
+    },
+    {
+      "category": "math_delimiter_or_mode",
+      "patterns": [
+        "Missing \\$ inserted",
+        "Display math should end with \\$\\$",
+        "Missing \\{ inserted",
+        "Missing \\} inserted",
+        "Extra \\}, or forgotten \\$",
+        "Double superscript",
+        "Double subscript"
+      ],
+      "is_cascade_symptom": false,
+      "fix_hint": "Escape literal underscores/carets/percent signs in text mode, balance math braces/subscripts, and wrap math symbols in $...$ or equation/align environments."
+    },
+    {
+      "category": "table_column_or_overflow",
+      "patterns": [
+        "Extra alignment tab has been changed to \\\\cr",
+        "Misplaced \\\\noalign",
+        "Misplaced alignment tab character &"
+      ],
+      "is_cascade_symptom": false,
+      "fix_hint": "Match the number of '&' column separators per row (accounting for \\multicolumn) to the tabular column specification, and ensure \\toprule/\\midrule/\\bottomrule appear right after \\\\."
+    },
+    {
+      "category": "missing_figure_asset",
+      "patterns": [
+        "Package pdftex\\.def Error: File `([^']+)' not found",
+        "LaTeX Error: File `([^']+)' not found.*includegraphics",
+        "Unable to load picture or PDF file '([^']+)'"
+      ],
+      "is_cascade_symptom": false,
+      "fix_hint": "Check \\graphicspath and relative figure path/extension; do not fabricate missing experimental images."
+    },
+    {
+      "category": "citation_or_bib_error",
+      "patterns": [
+        "LaTeX Warning: Citation `([^']+)' on page .* undefined",
+        "I didn't find a database entry for \"([^\"]+)\"",
+        "WARN - I didn't find a database entry for '([^']+)'"
+      ],
+      "is_cascade_symptom": false,
+      "fix_hint": "Reconcile \\cite{key} against exact keys in the .bib file and run bibtex/biber followed by two LaTeX passes."
+    },
+    {
+      "category": "undefined_reference_or_duplicate_label",
+      "patterns": [
+        "LaTeX Warning: Reference `([^']+)' on page .* undefined",
+        "LaTeX Warning: Label `([^']+)' multiply defined",
+        "LaTeX Warning: There were undefined references",
+        "LaTeX Warning: There were multiply-defined labels"
+      ],
+      "is_cascade_symptom": false,
+      "fix_hint": "Ensure every \\ref/\\eqref points to a unique \\label{...} and recompile at least twice after edits."
+    },
+    {
+      "category": "rerun_required",
+      "patterns": [
+        "LaTeX Warning: Label\\(s\\) may have changed\\. Rerun to get cross-references right",
+        "Package biblatex Warning: Please \\(re\\)run Biber",
+        "Rerun to get citations correct"
+      ],
+      "is_cascade_symptom": true,
+      "fix_hint": "Run an additional LaTeX (or Biber + LaTeX) compilation pass until references converge."
+    },
+    {
+      "category": "layout_overflow_warning",
+      "patterns": [
+        "Overfull \\\\hbox \\(([0-9.]+)pt too wide\\)"
+      ],
+      "is_cascade_symptom": true,
+      "fix_hint": "Fix wide tables or equations cleanly via tabularx/p{...}/split/align instead of blind shrink scaling."
+    }
+  ]
+}

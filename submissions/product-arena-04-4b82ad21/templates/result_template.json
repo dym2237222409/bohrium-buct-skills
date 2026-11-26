@@ -1,0 +1,24 @@
+{
+  "case_id": "<copied_verbatim_from_/input/case.json>",
+  "status": "completed",
+  "skill_name": "scipdf-intro-related-writer",
+  "deliverables": {
+    "manuscript_md": "introduction_and_related_work.md",
+    "manuscript_tex": null,
+    "comparison_matrix_md": "comparison_matrix.md",
+    "evidence_traceability_json": "evidence_traceability.json",
+    "review_checklist_md": "review_checklist.md"
+  },
+  "summary": {
+    "related_work_group_count": 0,
+    "verified_citations_used": 0,
+    "literature_coverage_ratio": 0.0,
+    "gaps_derived": 0,
+    "contributions_aligned": 0,
+    "audit_passed": true
+  },
+  "sources": [],
+  "uncertainty": [],
+  "change_records": [],
+  "audit_gates": {}
+}
