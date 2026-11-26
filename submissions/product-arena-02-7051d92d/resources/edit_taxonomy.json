@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "edit_types": {
+    "grammar_agreement": "Subject-verb agreement, singular/plural, pronoun-antecedent agreement.",
+    "tense_voice": "Tense alignment with academic section conventions and appropriate active/passive voice.",
+    "article_preposition": "Definite/indefinite articles (a/an/the) and academic prepositional collocations.",
+    "syntax_clarity": "Dangling modifiers, run-on sentence splitting, parallel structure, and clause flow.",
+    "collocation_word_choice": "Idiomatic academic lexical choice and precise domain verbs/nouns.",
+    "terminology_consistency": "Unifying cross-section terms against the active glossary and capitalization/hyphenation rules.",
+    "abbreviation_standardization": "Enforcing first-mention 'Full Name (ABBR)' and consistent subsequent use.",
+    "register_tone": "Removing colloquialisms, promotional hyperbole, improper person, or informal phrasing.",
+    "hedge_calibration": "Preserving or clarifying appropriate epistemic modality without inflating/weakening claims.",
+    "chinglish_restructure": "Eliminating literal translation patterns, redundant nominalization, and unnatural topic-subject framing.",
+    "punctuation_formatting": "Academic punctuation, hyphenation, spacing around units/citations, and markup hygiene.",
+    "no_change": "Sentence verified as accurate, consistent, and compliant; retained unchanged."
+  },
+  "risk_levels": {
+    "low": "Purely mechanical grammar, article, punctuation, or deterministic glossary normalization.",
+    "medium": "Clause restructuring, lexical substitution, or Chinglish/register revision preserving propositions.",
+    "high": "Ambiguous source wording, glossary conflict, potential factual/unit ambiguity, or structural split requiring author confirmation."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "profiles": {
+    "journal_article": {
+      "label": "Peer-Reviewed Journal Article",
+      "tone": "Objective, concise, cautious in interpretation, precise in methodology.",
+      "person_policy": "Prefer passive or active first-person plural ('we') only for author actions; avoid second-person 'you'.",
+      "tense_guidance": {
+        "abstract": "Past tense for methods/results; present tense for general truths and main conclusions.",
+        "introduction": "Present tense for established knowledge; present perfect for prior literature; past/present for this study's aim.",
+        "methods": "Simple past tense.",
+        "results": "Simple past tense for observations; present tense when referring to figures/tables ('Fig. 1 shows').",
+        "discussion": "Past tense for study findings; hedged present/modal verbs for interpretations."
+      },
+      "max_recommended_edit_ratio": 0.65,
+      "forbidden_tones": ["promotional", "colloquial", "absolutist"]
+    },
+    "thesis": {
+      "label": "Master's / Doctoral Thesis",
+      "tone": "Formal, thorough, structurally explicit, consistent across chapters.",
+      "person_policy": "Prefer 'this study / this chapter / 本文 / 本章' over 'I / 我'.",
+      "tense_guidance": {
+        "general": "Consistent chapter-level tense; avoid abrupt voice shifts."
+      },
+      "max_recommended_edit_ratio": 0.65,
+      "forbidden_tones": ["colloquial", "promotional"]
+    },
+    "grant_proposal": {
+      "label": "Research Grant Proposal (NSFC / NIH / NSF)",
+      "tone": "Persuasive yet scientifically rigorous; clear problem-gap-hypothesis-feasibility logic without exaggerated hype.",
+      "person_policy": "First-person plural ('we' / '本项目' / '申请团队') acceptable and clear.",
+      "tense_guidance": {
+        "prior_work": "Present perfect / past tense.",
+        "proposed_work": "Future tense ('will investigate' / '拟采用')."
+      },
+      "max_recommended_edit_ratio": 0.70,
+      "forbidden_tones": ["colloquial", "unsubstantiated_absolutist"]
+    },
+    "rebuttal": {
+      "label": "Peer-Review Response / Rebuttal Letter",
+      "tone": "Respectful, appreciative, direct, evidence-anchored; explicitly state where revisions were made.",
+      "person_policy": "First-person plural ('We thank the reviewer...').",
+      "tense_guidance": {
+        "actions_taken": "Present perfect / past tense ('We have revised Section 3.2...')."
+      },
+      "max_recommended_edit_ratio": 0.65,
+      "forbidden_tones": ["defensive", "dismissive", "colloquial"]
+    },
+    "abstract": {
+      "label": "Standalone Academic Abstract",
+      "tone": "High information density, zero fluff, self-contained abbreviations, strict hedge preservation.",
+      "person_policy": "Third-person or concise 'we'.",
+      "tense_guidance": {
+        "background": "Present tense.",
+        "methods_results": "Past tense.",
+        "conclusion": "Hedged present tense."
+      },
+      "max_recommended_edit_ratio": 0.65,
+      "forbidden_tones": ["promotional", "colloquial", "redundant_throat_clearing"]
+    }
+  },
+  "punctuation_rules": {
+    "en": {
+      "disallow_fullwidth_in_en_sentence": true,
+      "check_unbalanced_brackets": true
+    },
+    "zh": {
+      "prefer_fullwidth_sentence_punctuation": true,
+      "preserve_ascii_inside_math_and_citations": true
+    }
+  }
+}

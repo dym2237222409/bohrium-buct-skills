@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AcademicPolishingEditsDraft",
+  "type": "object",
+  "required": ["case_id", "target_register", "target_language", "glossary", "abbreviations", "sentences"],
+  "properties": {
+    "case_id": { "type": "string" },
+    "target_register": {
+      "type": "string",
+      "enum": ["journal_article", "thesis", "grant_proposal", "rebuttal", "abstract"]
+    },
+    "target_language": {
+      "type": "string",
+      "enum": ["en", "zh", "bilingual"]
+    },
+    "glossary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["canonical", "variants"],
+        "properties": {
+          "canonical": { "type": "string" },
+          "zh": { "type": "string" },
+          "en": { "type": "string" },
+          "variants": { "type": "array", "items": { "type": "string" } },
+          "source": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "abbreviations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["abbr", "full_form"],
+        "properties": {
+          "abbr": { "type": "string" },
+          "full_form": { "type": "string" },
+          "first_mention_sentence_id": { "type": "string" }
+        }
+      }
+    },
+    "sentences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sentence_id", "original", "revised", "changed", "edit_types", "reason", "risk_level", "needs_human_confirmation"],
+        "properties": {
+          "sentence_id": { "type": "string" },
+          "section": { "type": "string" },
+          "paragraph_id": { "type": "string" },
+          "original": { "type": "string" },
+          "revised": { "type": "string" },
+          "changed": { "type": "boolean" },
+          "edit_types": { "type": "array", "items": { "type": "string" } },
+          "reason": { "type": "string" },
+          "risk_level": { "type": "string", "enum": ["low", "medium", "high"] },
+          "needs_human_confirmation": { "type": "boolean" },
+          "confirmation_note": { "type": "string" },
+          "allow_numeric_format_change": { "type": "boolean" }
+        }
+      }
+    },
+    "uncertainty": { "type": "array", "items": { "type": "string" } }
+  }
+}

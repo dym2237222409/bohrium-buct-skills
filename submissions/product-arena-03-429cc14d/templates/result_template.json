@@ -1,0 +1,31 @@
+{
+  "case_id": "<PRESERVED_FROM_INPUT_CASE_JSON>",
+  "status": "completed",
+  "target_style": "gbt7714_numeric",
+  "deliverables": {
+    "manuscript_updated": "manuscript_updated.md",
+    "references_formatted": "references_formatted.md",
+    "references_bib": "references_clean.bib",
+    "references_ris": "references_clean.ris",
+    "dedup_report_json": "dedup_and_merge_report.json",
+    "citation_audit_json": "citation_audit_report.json"
+  },
+  "summary_metrics": {
+    "raw_library_entries": 0,
+    "deduplicated_library_entries": 0,
+    "merged_duplicate_groups": 0,
+    "kept_separate_guarded_pairs": 0,
+    "cited_reference_count": 0,
+    "uncited_library_count": 0,
+    "hard_gate_errors": 0,
+    "warnings": 0
+  },
+  "sources": [],
+  "old_to_new_map": [],
+  "cited_references": [],
+  "uncited_library_entries": [],
+  "claim_alignments": [],
+  "change_records": [],
+  "human_review_items": [],
+  "uncertainty": []
+}

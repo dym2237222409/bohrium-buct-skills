@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CitationManagementPlan",
+  "type": "object",
+  "required": ["case_id", "target_style", "sentences", "claim_alignments"],
+  "properties": {
+    "case_id": { "type": "string" },
+    "target_style": {
+      "type": "string",
+      "enum": ["gbt7714_numeric", "gbt7714_author_year", "apa7", "ieee", "vancouver"]
+    },
+    "superscript_numeric": { "type": "boolean" },
+    "sentences": {
+      "type": "array",
+      "description": "Ordered manuscript sentences/blocks using {{CITE:REF001,REF002}} placeholders at exact claim positions.",
+      "items": {
+        "type": "object",
+        "required": ["sentence_id", "text_with_placeholders"],
+        "properties": {
+          "sentence_id": { "type": "string" },
+          "section": { "type": "string" },
+          "paragraph_id": { "type": "string" },
+          "is_structural_block": { "type": "boolean" },
+          "is_caption": { "type": "boolean" },
+          "caption_cite_is_source_attribution": { "type": "boolean" },
+          "original_text": { "type": "string" },
+          "text_with_placeholders": { "type": "string" },
+          "action": {
+            "type": "string",
+            "enum": ["unchanged", "insert", "relocate", "replace", "delete", "renumber_only"]
+          },
+          "old_citation_markers": { "type": "array", "items": { "type": "string" } },
+          "change_reason": { "type": "string" }
+        }
+      }
+    },
+    "claim_alignments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sentence_id", "ref_id", "alignment_status", "evidence_basis"],
+        "properties": {
+          "sentence_id": { "type": "string" },
+          "ref_id": { "type": "string" },
+          "claim_excerpt": { "type": "string" },
+          "alignment_status": {
+            "type": "string",
+            "enum": [
+              "supported",
+              "partial_support",
+              "mismatch",
+              "insufficient_evidence_in_metadata",
+              "fabricated_or_unverified"
+            ]
+          },
+          "evidence_basis": { "type": "string" },
+          "needs_human_confirmation": { "type": "boolean" }
+        }
+      }
+    },
+    "uncertainty": { "type": "array", "items": { "type": "string" } }
+  }
+}

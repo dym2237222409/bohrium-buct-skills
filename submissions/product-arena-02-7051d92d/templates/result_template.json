@@ -1,0 +1,27 @@
+{
+  "case_id": "<PRESERVED_FROM_INPUT_CASE_JSON>",
+  "status": "completed",
+  "target_register": "journal_article",
+  "target_language": "en",
+  "deliverables": {
+    "polished_manuscript": "polished_manuscript.md",
+    "revision_log_md": "revision_log.md",
+    "revision_log_jsonl": "revision_log.jsonl",
+    "glossary_json": "glossary_and_abbreviations.json",
+    "qa_audit_report": "qa_audit_report.json"
+  },
+  "summary_metrics": {
+    "total_sentences": 0,
+    "changed_sentences": 0,
+    "unchanged_sentences": 0,
+    "hard_gate_errors": 0,
+    "warnings": 0,
+    "human_confirmation_count": 0
+  },
+  "sources": [],
+  "glossary": [],
+  "abbreviations": [],
+  "change_records": [],
+  "human_review_items": [],
+  "uncertainty": []
+}

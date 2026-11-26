@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0",
+  "description": "Bilingual (EN/ZH) lexicon for claim-strength (hedge) conservation, causality vs correlation preservation, negation scope checking, and anti-promotional/Chinglish linting.",
+  "claim_strength_tiers": {
+    "0_hedged_tentative": {
+      "level": 0,
+      "label": "Tentative / Hedged",
+      "en": [
+        "may", "might", "could", "appears to", "appear to", "seems to", "seem to",
+        "suggests", "suggest", "suggested", "indicates", "indicate", "indicated",
+        "possibly", "potentially", "likely", "tentatively", "preliminary",
+        "is consistent with", "are consistent with", "tends to", "tend to",
+        "plausibly", "partially", "under certain conditions"
+      ],
+      "zh": [
+        "可能", "或许", "初步表明", "初步显示", "提示", "倾向于", "在一定程度上",
+        "在特定条件下", "有待进一步验证", "推测", "似乎", "大致"
+      ]
+    },
+    "1_observational_correlational": {
+      "level": 1,
+      "label": "Observational / Correlational",
+      "en": [
+        "is associated with", "are associated with", "associated with",
+        "correlates with", "correlate with", "correlated with", "correlation",
+        "co-occurs with", "is linked to", "are linked to", "relates to",
+        "was observed", "were observed", "observed", "shows an association",
+        "exhibits a trend", "tracks with"
+      ],
+      "zh": [
+        "相关", "显著相关", "正相关", "负相关", "伴随", "关联", "观察到",
+        "观测到", "呈现", "表现为", "存在联系"
+      ]
+    },
+    "2_strong_causal_definitive": {
+      "level": 2,
+      "label": "Strong / Causal / Definitive",
+      "en": [
+        "proves", "prove", "proved", "proven", "definitively", "conclusively",
+        "causes", "cause", "caused", "directly causes", "drives", "determines",
+        "guarantees", "ensures", "demonstrates conclusively", "establishes that",
+        "confirms beyond doubt", "induces", "triggers directly"
+      ],
+      "zh": [
+        "证明", "确证", "证实", "必然导致", "直接导致", "决定", "引起",
+        "造成", "确保", "确立了", "充分证明"
+      ]
+    },
+    "3_absolutist_promotional": {
+      "level": 3,
+      "label": "Absolutist / Promotional (Red Flag)",
+      "en": [
+        "undoubtedly", "unquestionably", "obviously", "clearly proves",
+        "always", "never fails", "revolutionary", "groundbreaking", "unprecedented",
+        "breakthrough", "perfect", "completely solves", "game-changing",
+        "remarkably superior", "dramatically outperforms all", "it is well known that",
+        "needless to say", "of course", "100% certain"
+      ],
+      "zh": [
+        "毫无疑问", "毋庸置疑", "显而易见", "众所周知", "必然", "绝对",
+        "完美解决", "革命性", "颠覆性", "史无前例", "划时代", "首次彻底解决",
+        "极其优异", "遥遥领先"
+      ]
+    }
+  },
+  "causality_markers": {
+    "en": [
+      "causes", "cause", "caused", "leads to", "lead to", "led to",
+      "results in", "result in", "resulted in", "drives", "induces",
+      "triggers", "produces", "because of", "due to", "owing to", "determines"
+    ],
+    "zh": [
+      "导致", "引起", "造成", "促使", "诱发", "决定", "归因于", "引发"
+    ]
+  },
+  "correlation_markers": {
+    "en": [
+      "correlates with", "correlated with", "correlation", "associated with",
+      "is associated with", "are associated with", "linked to", "co-occurs with",
+      "covaries with", "relationship between"
+    ],
+    "zh": [
+      "相关", "正相关", "负相关", "关联", "存在联系", "伴随出现"
+    ]
+  },
+  "negation_and_scope_markers": {
+    "en": [
+      "not", "no", "never", "neither", "nor", "without", "cannot", "can't",
+      "does not", "do not", "did not", "failed to", "lack of", "absence of",
+      "only", "except", "unless", "hardly", "rarely", "seldom", "not all",
+      "at least", "at most", "no more than", "less than", "greater than"
+    ],
+    "zh": [
+      "不", "未", "无", "非", "没有", "并非", "尚未", "缺乏", "仅", "只",
+      "除非", "除了", "并非所有", "至少", "至多", "不超过", "小于", "大于"
+    ]
+  },
+  "chinglish_and_colloquial_patterns": [
+    {
+      "id": "CHINGLISH_01",
+      "pattern": "\\bwith the (rapid )?development of\\b",
+      "severity": "warning",
+      "suggestion": "Replace with a domain-specific framing (e.g., 'Recent advances in ...' or direct topic opening)."
+    },
+    {
+      "id": "CHINGLISH_02",
+      "pattern": "\\bmore and more\\b",
+      "severity": "warning",
+      "suggestion": "Replace colloquial 'more and more' with 'increasingly' or 'a growing number of'."
+    },
+    {
+      "id": "CHINGLISH_03",
+      "pattern": "\\ba lot of\\b|\\blots of\\b",
+      "severity": "warning",
+      "suggestion": "Replace colloquial quantifier with 'numerous', 'substantial', or an exact count."
+    },
+    {
+      "id": "CHINGLISH_04",
+      "pattern": "\\bin recent years,\\s*many researchers\\b",
+      "severity": "info",
+      "suggestion": "Consider tighter scholarly phrasing with explicit citations."
+    },
+    {
+      "id": "CHINGLISH_05",
+      "pattern": "\\bplay an? (very )?important role in\\b",
+      "severity": "info",
+      "suggestion": "Consider a more precise verb describing the actual mechanism or function."
+    },
+    {
+      "id": "CHINGLISH_06",
+      "pattern": "\\bit is well known that\\b|\\bas we all know\\b",
+      "severity": "warning",
+      "suggestion": "Avoid informal/presumptuous phrasing; state the established fact concisely with citations."
+    },
+    {
+      "id": "CHINGLISH_07",
+      "pattern": "\\bget(s|ting)? (better|worse|higher|lower)\\b",
+      "severity": "warning",
+      "suggestion": "Replace informal 'get' with 'improve', 'increase', 'decrease', or 'degrade'."
+    },
+    {
+      "id": "COLLOQUIAL_ZH_01",
+      "pattern": "非常大|特别好|很不错|大大提高|众所周知|显而易见|毫无疑问",
+      "severity": "warning",
+      "suggestion": "替换为客观、可量化的学术中文表述（如“显著提升”“提高 X%”“已有研究表明”）。"
+    }
+  ]
+}

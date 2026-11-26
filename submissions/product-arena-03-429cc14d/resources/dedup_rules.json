@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "description": "Explainable 4-tier bibliography deduplication rules with anti-false-merge guardrails and field provenance priority.",
+  "thresholds": {
+    "preprint_published_title_similarity": 0.90,
+    "cross_db_title_similarity": 0.92,
+    "author_overlap_min": 0.50,
+    "preprint_max_year_diff": 2,
+    "cross_db_max_year_diff": 1,
+    "same_author_same_year_distinct_title_ceiling": 0.75
+  },
+  "version_preference_order": [
+    "article",
+    "inproceedings",
+    "conference",
+    "book",
+    "incollection",
+    "phdthesis",
+    "mastersthesis",
+    "techreport",
+    "preprint",
+    "misc",
+    "online"
+  ],
+  "preprint_venue_indicators": [
+    "arxiv",
+    "biorxiv",
+    "medrxiv",
+    "chemrxiv",
+    "ssrn",
+    "research square",
+    "preprint",
+    "chinaarxiv"
+  ],
+  "anti_false_merge_rules": [
+    "NEVER merge two records that carry two distinct, valid non-preprint DOIs.",
+    "NEVER merge two records by the same first author in the same year if normalized title similarity < 0.75.",
+    "NEVER silently overwrite conflicting metadata (e.g., conflicting publication years or non-overlapping page ranges); preserve canonical value and log conflict in field_conflicts."
+  ]
+}
