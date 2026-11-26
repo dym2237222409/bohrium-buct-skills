@@ -1,0 +1,29 @@
+{
+  "_template_notice": "Executable query specification template for run_kg_queries.py (>= 3 real queries including cross-paper comparison, multi-hop/neighborhood evidence retrieval, conflict audit, and negative/unverifiable query handling).",
+  "queries": [
+    {
+      "query_id": "Q1",
+      "kind": "entity_neighborhood",
+      "description": "Retrieve all evidence-grounded neighbors and operating conditions around a target concept or method.",
+      "entity_query": "HZSM-5"
+    },
+    {
+      "query_id": "Q2",
+      "kind": "cross_paper_comparison",
+      "description": "List all concepts referenced across >= 2 distinct source_id papers while separating paper-specific samples, conditions, and metrics.",
+      "min_distinct_sources": 2
+    },
+    {
+      "query_id": "Q3",
+      "kind": "conflict_and_condition_audit",
+      "description": "Detect opposing or contradictory relations across papers or operating regimes with verbatim evidence."
+    },
+    {
+      "query_id": "Q4",
+      "kind": "shortest_evidence_path",
+      "description": "Check whether a verified path connects two queried entities; honestly report 'unverifiable_not_connected' when no evidence path exists.",
+      "from_entity": "HZSM-5",
+      "to_entity": "unreported_pressure_drop"
+    }
+  ]
+}

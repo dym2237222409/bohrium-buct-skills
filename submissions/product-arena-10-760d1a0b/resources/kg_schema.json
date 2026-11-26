@@ -1,0 +1,40 @@
+{
+  "version": "1.0.0",
+  "description": "Controlled scientific Literature Knowledge Graph ontology covering Entity Types, Directed Relation Types, Attribution Tiers, and Evidence Strength.",
+  "entity_types": [
+    "Researcher",
+    "Material_or_Sample",
+    "Method_or_Model",
+    "Task_or_Phenomenon",
+    "Dataset_or_Cohort",
+    "Metric_or_Property",
+    "Claim_or_Conclusion",
+    "Condition_or_Regime",
+    "Concept_Term"
+  ],
+  "relation_types": {
+    "USES": {"direction": "subject_uses_object", "opposite": null, "description": "Study/method uses a material, dataset, instrument, or algorithm."},
+    "COMPARES_WITH": {"direction": "subject_compared_to_object", "opposite": null, "description": "Explicit controlled comparison reported in the source."},
+    "OUTPERFORMS": {"direction": "subject_superior_to_object", "opposite": "UNDERPERFORMS", "description": "Subject achieves superior performance over baseline object under specified metric/conditions."},
+    "UNDERPERFORMS": {"direction": "subject_inferior_to_object", "opposite": "OUTPERFORMS", "description": "Subject achieves lower performance than object under specified metric/conditions."},
+    "SUPPORTS": {"direction": "evidence_supports_claim", "opposite": "CONTRADICTS", "description": "Finding or observation empirically supports a hypothesis or prior claim."},
+    "CONTRADICTS": {"direction": "evidence_contradicts_claim", "opposite": "SUPPORTS", "description": "Finding explicitly conflicts with or refutes another claim or study."},
+    "MEASURES": {"direction": "entity_measured_by_metric", "opposite": null, "description": "Entity or experimental run reports a specific quantitative metric."},
+    "INCREASES": {"direction": "subject_elevates_object", "opposite": "DECREASES", "description": "Factor increases target property/metric under stated conditions."},
+    "DECREASES": {"direction": "subject_reduces_object", "opposite": "INCREASES", "description": "Factor decreases target property/metric under stated conditions."},
+    "DEPENDS_ON": {"direction": "subject_depends_on_condition", "opposite": "INDEPENDENT_OF", "description": "Outcome depends on operating parameter or precondition."},
+    "INDEPENDENT_OF": {"direction": "subject_invariant_to_condition", "opposite": "DEPENDS_ON", "description": "Outcome shown invariant to parameter."},
+    "INSTANCE_OF": {"direction": "specific_sample_instance_of_general_concept", "opposite": null, "description": "Links a paper-specific physical sample, model checkpoint, or dataset split to a shared conceptual term without conflating conditions/results."},
+    "EVALUATED_ON": {"direction": "method_evaluated_on_task_or_dataset", "opposite": null, "description": "Method/material evaluated on benchmark task, reaction, or cohort."},
+    "AUTHORED_BY": {"direction": "paper_or_claim_authored_by_researcher", "opposite": null, "description": "Attribution to study authors."}
+  },
+  "attribution_types": [
+    "author_direct",
+    "cited_prior_work"
+  ],
+  "evidence_strength_levels": [
+    "strong_direct",
+    "moderate_indirect",
+    "weak_cited"
+  ]
+}

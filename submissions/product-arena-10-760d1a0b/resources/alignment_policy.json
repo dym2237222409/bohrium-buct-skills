@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "description": "Anti-false-merge and cross-paper alignment rules for multi-document scientific Knowledge Graph construction.",
+  "principles": [
+    "NEVER apply Paper 1 (root case.json) DOI, title, or authors to Paper 2 (secondary-material.json). Bind metadata strictly per independent source_id.",
+    "NEVER treat multiple file formats (.json + .md) of the same paper (identical source_id or text hash) as cross-paper corroboration.",
+    "NEVER fabricate PDF page numbers (e.g. page=1) when the corpus provides JATS paragraph_id locations without PDF pages.",
+    "Sharing a general method or material name (e.g. 'HZSM-5', 'DFT', 'ResNet-50') allows linking to a shared Concept_Term node via INSTANCE_OF, but paper-specific physical samples, experimental parameters, cohorts, and quantitative outcomes MUST remain separate nodes unless proven identical.",
+    "Every merge decision AND every explicit do-not-merge decision (homonyms, distinct experimental conditions, conflicting metrics) must be recorded in entity_alignment_log."
+  ],
+  "merge_scopes": [
+    "merged_identical_entity",
+    "merged_concept_only",
+    "kept_separate_do_not_merge"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "description": "Nanopublication 4-graph field dictionary (Head, Assertion, Provenance, Pubinfo) and mechanical quality-gate thresholds.",
+  "four_graph_contract": {
+    "head": ["nanopub_uri", "assertion_graph_uri", "provenance_graph_uri", "pubinfo_graph_uri"],
+    "assertion": ["assertion_id", "subject", "relation", "object", "conditions_and_scope", "quantitative_value", "negated", "claim_text"],
+    "provenance": ["source_id", "location_type", "location_ref", "minimal_evidence_quote", "evidence_type", "confidence_basis", "study_method"],
+    "pubinfo": ["paper_title", "paper_authors", "paper_year", "paper_doi_or_id", "source_sha256", "created_at", "generator", "content_sha256", "trusty_id"]
+  },
+  "quality_gate_thresholds": {
+    "max_claim_text_chars": 280,
+    "min_evidence_quote_chars": 18,
+    "max_evidence_quote_chars": 480,
+    "forbid_multi_sentence_claim_count_gt": 1,
+    "compound_clause_warning_patterns": [
+      ";\\s+[A-Za-z]",
+      "\\b(?:furthermore|moreover|in\\s+addition|additionally)\\b"
+    ]
+  }
+}

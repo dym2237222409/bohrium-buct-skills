@@ -1,0 +1,32 @@
+{
+  "_template_notice": "TEMPLATE ONLY — Canonical /app/output/result.json template for Literature Knowledge Graph construction. Preserve every original output_contract key from /input/case.json.",
+  "case_id": "<copied_from_/input/case.json>",
+  "status": "success",
+  "status_reason": "Built multi-paper evidence-grounded Knowledge Graph with anti-false-merge alignment log, incremental update audit, visual SVG preview, and verified query results.",
+  "input_identification": {
+    "case_json_path": "/input/case.json",
+    "corpus_sources": []
+  },
+  "results": {
+    "kg_json_path": "/app/output/knowledge_graph.json",
+    "kg_jsonld_path": "/app/output/knowledge_graph.jsonld",
+    "kg_graphml_path": "/app/output/knowledge_graph.graphml",
+    "kg_cypher_path": "/app/output/knowledge_graph.cypher",
+    "kg_mermaid_path": "/app/output/knowledge_graph.mmd",
+    "kg_preview_svg_path": "/app/output/kg_preview.svg",
+    "queries_report_path": "/app/output/kg_queries_report.md",
+    "audit_report_path": "/app/output/kg_audit_report.md",
+    "graph_summary": {},
+    "entity_alignment_log": [],
+    "incremental_update_log": {},
+    "query_results": []
+  },
+  "sources": [],
+  "uncertainty": {
+    "unreported_in_source": [],
+    "unverifiable_queries_or_relations": [],
+    "material_conflicts": [],
+    "human_takeover_locations": []
+  },
+  "change_records": []
+}

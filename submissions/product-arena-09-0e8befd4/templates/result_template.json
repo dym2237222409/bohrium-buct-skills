@@ -1,0 +1,34 @@
+{
+  "_template_notice": "TEMPLATE ONLY — Reference structure for /app/output/result.json. Always preserve all original output_contract keys from /input/case.json.",
+  "case_id": "<copied_from_/input/case.json>",
+  "status": "success",
+  "status_reason": "Extracted atomic falsifiable Nanopublications with verified minimal evidence bindings and W3C TriG/JSON-LD/N-Quads exports.",
+  "input_identification": {
+    "case_json_path": "/input/case.json",
+    "task_md_path": "/input/task.md",
+    "source_files": []
+  },
+  "results": {
+    "nanopubs_trig_path": "/app/output/nanopublications.trig",
+    "nanopubs_jsonld_path": "/app/output/nanopublications.jsonld",
+    "nanopubs_nq_path": "/app/output/nanopublications.nq",
+    "nanopubs_jsonl_path": "/app/output/nanopublications.jsonl",
+    "audit_report_path": "/app/output/nanopub_audit_report.md",
+    "nanopublications": [],
+    "quality_metrics": {
+      "assertions_raw": 0,
+      "assertions_deduplicated": 0,
+      "evidence_grounded_ratio": 1.0,
+      "controlled_relation_ratio": 1.0,
+      "contradictions_detected": 0
+    }
+  },
+  "sources": [],
+  "uncertainty": {
+    "unreported_in_source": [],
+    "unverifiable_items": [],
+    "material_conflicts": [],
+    "human_takeover_locations": []
+  },
+  "change_records": []
+}

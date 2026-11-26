@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "description": "Controlled scientific assertion relation vocabulary mapped to standard OBO Relation Ontology (RO), SIO, and SEPIO IRIs with polarity and conflict-pair definitions.",
+  "prefixes": {
+    "np": "http://www.nanopub.org/nschema#",
+    "prov": "http://www.w3.org/ns/prov#",
+    "pav": "http://purl.org/pav/",
+    "dct": "http://purl.org/dc/terms/",
+    "ro": "http://purl.obolibrary.org/obo/RO_",
+    "sio": "http://semanticscience.org/resource/SIO_",
+    "sepio": "http://purl.obolibrary.org/obo/SEPIO_",
+    "scirel": "https://w3id.org/scipdf/rel/"
+  },
+  "relations": {
+    "increases": {"iri": "scirel:increases", "obo_mapping": "ro:0002213", "polarity": "positive", "opposite": "decreases", "description": "Subject quantitatively or qualitatively elevates/enhances object under stated conditions."},
+    "decreases": {"iri": "scirel:decreases", "obo_mapping": "ro:0002212", "polarity": "negative", "opposite": "increases", "description": "Subject reduces, suppresses, or lowers object under stated conditions."},
+    "causes": {"iri": "scirel:causes", "obo_mapping": "ro:0002410", "polarity": "positive", "opposite": "prevents", "description": "Direct mechanistic or interventional causal effect demonstrated by experiment or proof."},
+    "prevents": {"iri": "scirel:prevents", "obo_mapping": "ro:0002559", "polarity": "negative", "opposite": "causes", "description": "Subject blocks, inhibits, or prevents occurrence of object."},
+    "inhibits": {"iri": "scirel:inhibits", "obo_mapping": "ro:0002449", "polarity": "negative", "opposite": "activates", "description": "Subject inhibits activity, reaction pathway, or expression of object."},
+    "activates": {"iri": "scirel:activates", "obo_mapping": "ro:0002448", "polarity": "positive", "opposite": "inhibits", "description": "Subject activates or catalyzes object."},
+    "associates_with": {"iri": "scirel:associates_with", "obo_mapping": "sio:001403", "polarity": "neutral", "opposite": "no_significant_effect_on", "description": "Observational correlation or statistical association without proven causation."},
+    "no_significant_effect_on": {"iri": "scirel:no_significant_effect_on", "obo_mapping": "scirel:no_significant_effect_on", "polarity": "null", "opposite": "associates_with", "description": "Null or statistically insignificant finding explicitly reported by authors."},
+    "outperforms": {"iri": "scirel:outperforms", "obo_mapping": "scirel:outperforms", "polarity": "positive", "opposite": "underperforms", "description": "Subject achieves superior metric compared to baseline object under matched protocol."},
+    "underperforms": {"iri": "scirel:underperforms", "obo_mapping": "scirel:underperforms", "polarity": "negative", "opposite": "outperforms", "description": "Subject achieves inferior metric compared to baseline object."},
+    "achieves_metric": {"iri": "scirel:achieves_metric", "obo_mapping": "sio:000216", "polarity": "neutral", "opposite": null, "description": "Subject attains a specific quantitative measurement or benchmark value."},
+    "depends_on": {"iri": "scirel:depends_on", "obo_mapping": "ro:0002502", "polarity": "neutral", "opposite": "independent_of", "description": "Object/behavior requires or varies functionally with condition or variable."},
+    "independent_of": {"iri": "scirel:independent_of", "obo_mapping": "scirel:independent_of", "polarity": "null", "opposite": "depends_on", "description": "Explicitly shown invariance or lack of dependence on a variable."},
+    "uses_method_or_material": {"iri": "scirel:uses_method_or_material", "obo_mapping": "ro:0002233", "polarity": "neutral", "opposite": null, "description": "Study, protocol, or system employs specific catalyst, dataset, algorithm, or instrument."},
+    "supports": {"iri": "scirel:supports", "obo_mapping": "sepio:0000007", "polarity": "positive", "opposite": "contradicts", "description": "Empirical finding or derivation supports a hypothesis or prior claim."},
+    "contradicts": {"iri": "scirel:contradicts", "obo_mapping": "sepio:0000188", "polarity": "negative", "opposite": "supports", "description": "Empirical finding refutes or conflicts with a hypothesis or prior claim."},
+    "limited_by": {"iri": "scirel:limited_by", "obo_mapping": "scirel:limited_by", "polarity": "negative", "opposite": null, "description": "Applicability or performance of subject is bounded by a bottleneck or failure mode."}
+  },
+  "evidence_types": [
+    "direct_experimental",
+    "direct_computational",
+    "direct_tabular",
+    "direct_mathematical_proof",
+    "indirect_inference",
+    "cited_prior_work"
+  ]
+}

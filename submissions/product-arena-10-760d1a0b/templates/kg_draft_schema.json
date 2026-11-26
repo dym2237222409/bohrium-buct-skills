@@ -1,0 +1,62 @@
+{
+  "_schema_notice": "Per-paper or multi-paper KG extraction draft fed into build_and_update_kg.py. Every entity and relation must cite exact source_id, paragraph_id (or PDF page/block), and verbatim_quote.",
+  "entities": [
+    {
+      "temp_id": "n_concept_hzsm5",
+      "canonical_name": "HZSM-5 zeolite",
+      "entity_type": "Concept_Term",
+      "aliases": ["HZSM-5"],
+      "is_paper_specific_instance": false,
+      "provenance": [
+        {
+          "source_id": "primary",
+          "paragraph_id": "p_002",
+          "verbatim_quote": "HZSM-5 zeolite (Si/Al = 40) was coated on microchannel walls.",
+          "attribution": "author_direct"
+        }
+      ]
+    },
+    {
+      "temp_id": "n_p1_sample",
+      "canonical_name": "HZSM-5 microchannel sample (Si/Al=40, primary)",
+      "entity_type": "Material_or_Sample",
+      "aliases": ["Zeo-Micro"],
+      "is_paper_specific_instance": true,
+      "conditions_summary": "Si/Al=40, 260 C, 12.5 mL/min",
+      "provenance": [
+        {
+          "source_id": "primary",
+          "paragraph_id": "p_002",
+          "verbatim_quote": "HZSM-5 zeolite (Si/Al = 40) was coated on microchannel walls.",
+          "attribution": "author_direct"
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "source_temp_id": "n_p1_sample",
+      "relation_type": "INSTANCE_OF",
+      "target_temp_id": "n_concept_hzsm5",
+      "conditions": "General catalyst family link only; distinct Si/Al and operating regime preserved on sample node.",
+      "quantitative_detail": "Si/Al = 40",
+      "evidence_strength": "strong_direct",
+      "provenance": [
+        {
+          "source_id": "primary",
+          "paragraph_id": "p_002",
+          "verbatim_quote": "HZSM-5 zeolite (Si/Al = 40) was coated on microchannel walls.",
+          "attribution": "author_direct"
+        }
+      ]
+    }
+  ],
+  "alignment_decisions": [
+    {
+      "candidate_names": ["HZSM-5 (primary)", "HZSM-5 (secondary)"],
+      "decision": "kept_separate_do_not_merge",
+      "shared_concept": "HZSM-5 zeolite",
+      "rationale": "Primary paper uses Si/Al=40 microchannel coating at 260 C, whereas secondary paper uses Si/Al=80 packed pellets at 380 C; physical samples and metrics are not merged."
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "_schema_notice": "Input draft schema authored by Agent after running index_source_passages.py, then validated and serialized into TriG/JSON-LD/N-Quads/JSONL by build_and_validate_nanopubs.py.",
+  "paper_metadata": {
+    "source_id": "primary",
+    "paper_title": "<exact_title_from_source>",
+    "paper_authors": ["<Author 1>", "<Author 2>"],
+    "paper_year": 2025,
+    "paper_doi_or_id": "<doi_or_not_reported>",
+    "license": "<license_or_not_reported>"
+  },
+  "assertions": [
+    {
+      "assertion_id": "NP001",
+      "subject": "Zeo-Micro microchannel reactor",
+      "subject_type": "method_or_system",
+      "relation": "achieves_metric",
+      "object": "96.1% product selectivity",
+      "object_type": "metric_value",
+      "conditions_and_scope": "wall temperature 260 C, laminar flow 12.5 mL/min, HZSM-5 (Si/Al=40)",
+      "quantitative_value": "96.1%",
+      "negated": false,
+      "claim_text": "Zeo-Micro microchannel reactor achieves 96.1% product selectivity at 260 C and 12.5 mL/min.",
+      "provenance": {
+        "source_id": "primary",
+        "passage_id": "P0006",
+        "minimal_evidence_quote": "Zeo-Micro achieves 96.1% selectivity at 260 C and 12.5 mL/min.",
+        "evidence_type": "direct_experimental",
+        "confidence_basis": "Direct quantitative measurement reported in Results text and Table 1.",
+        "study_method": "Fixed-bed catalytic microreactor experiment"
+      }
+    }
+  ],
+  "unreported_or_rejected_claims": [
+    {
+      "candidate_topic": "Long-term stability beyond 48 h",
+      "reason": "Not measured in source paper; omitted from assertions rather than inferred."
+    }
+  ]
+}
