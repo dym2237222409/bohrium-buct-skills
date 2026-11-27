@@ -28,11 +28,15 @@ def utc_now_iso() -> str:
     return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+def normalize_num_token(tok: str) -> str:
+    return re.sub(r"\s+", "", tok).replace(",", "")
+
+
 def extract_numbers(text: str) -> List[str]:
     # Extract normalized numeric literals (ignoring reference brackets like [1, 2] handled separately)
     without_refs = re.sub(r"\[\d+(?:\s*[,\-–]\s*\d+)*\]", " ", text)
-    hits = re.findall(r"(?<![A-Za-z_])\d+(?:\.\d+)?%?", without_refs)
-    return [h for h in hits]
+    hits = re.findall(r"(?<![A-Za-z_])\d+(?:,\d{3})*(?:\.\d+)?(?:\s*%)?", without_refs)
+    return [normalize_num_token(h) for h in hits]
 
 
 def extract_bracket_citations(text: str) -> List[str]:
@@ -166,12 +170,13 @@ def audit_and_align(
                             "detail": f"Expected locked term '{locked_zh}' for '{ent['source_term']}'.",
                         })
 
-            # Number & citation parity checks
+            # Number & citation parity checks (normalized for spacing before % and thousands commas)
             src_nums = extract_numbers(src_txt)
             tgt_nums = extract_numbers(tgt_txt)
+            tgt_compact = re.sub(r"\s+", "", tgt_txt).replace(",", "")
             for num in src_nums:
                 num_cit_total += 1
-                if num in tgt_nums or num in tgt_txt:
+                if num in tgt_nums or num in tgt_compact:
                     num_cit_passed += 1
                 else:
                     fidelity_issues.append({
@@ -203,22 +208,40 @@ def audit_and_align(
                         "source_excerpt": src_txt[:140],
                     })
 
-            # Negation polarity check
-            has_en_neg = any(rx.search(src_txt) for rx in neg_en_res)
-            has_zh_neg = any(mk in tgt_txt for mk in neg_zh_markers)
-            if has_en_neg and not has_zh_neg:
-                fidelity_issues.append({
-                    "seg_id": sid,
-                    "page": seg["page"],
-                    "check": "negation_polarity",
-                    "detail": "Source contains English negation trigger, but no Chinese negation marker was detected in target_text.",
-                })
-                human_review_checklist.append({
-                    "seg_id": sid,
-                    "page": seg["page"],
-                    "issue_type": "negation_polarity_warning",
-                    "detail": "Verify negation scope preservation against source sentence.",
-                })
+            # Bidirectional negation polarity check (EN->ZH and ZH->EN)
+            src_is_zh = len(re.findall(r"[\u4e00-\u9fff]", src_txt)) > len(re.findall(r"[A-Za-z]", src_txt))
+            if not src_is_zh:
+                has_en_neg = any(rx.search(src_txt) for rx in neg_en_res)
+                has_zh_neg = any(mk in tgt_txt for mk in neg_zh_markers)
+                if has_en_neg and not has_zh_neg:
+                    fidelity_issues.append({
+                        "seg_id": sid,
+                        "page": seg["page"],
+                        "check": "negation_polarity",
+                        "detail": "Source contains English negation trigger, but no Chinese negation marker was detected in target_text.",
+                    })
+                    human_review_checklist.append({
+                        "seg_id": sid,
+                        "page": seg["page"],
+                        "issue_type": "negation_polarity_warning",
+                        "detail": "Verify negation scope preservation against source sentence.",
+                    })
+            else:
+                has_zh_neg = any(mk in src_txt for mk in neg_zh_markers)
+                has_en_neg = any(rx.search(tgt_txt) for rx in neg_en_res)
+                if has_zh_neg and not has_en_neg:
+                    fidelity_issues.append({
+                        "seg_id": sid,
+                        "page": seg["page"],
+                        "check": "negation_polarity",
+                        "detail": "Source contains Chinese negation marker, but no English negation trigger was detected in target_text.",
+                    })
+                    human_review_checklist.append({
+                        "seg_id": sid,
+                        "page": seg["page"],
+                        "issue_type": "negation_polarity_warning",
+                        "detail": "Verify ZH->EN negation scope preservation against source sentence.",
+                    })
 
             # Hedging, conditional & bound rules
             for rl in hedge_rules:
@@ -399,11 +422,33 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     bi_md_path = out_dir / "bilingual_translation.md"
+    bi_table_path = out_dir / "bilingual_table.md"
+    tgt_only_path = out_dir / "translated_only.md"
     bi_json_path = out_dir / "bilingual_segments.json"
     gloss_out_path = out_dir / "locked_glossary.json"
     qa_md_path = out_dir / "translation_qa_report.md"
 
     bi_md_path.write_text(render_bilingual_markdown(seg_data.get("source_file", "document"), audit["aligned_segments"], audit["metrics"]), encoding="utf-8")
+    # Also export side-by-side bilingual table and pure target-language reading copy
+    tbl_lines = [
+        "# Side-by-Side Bilingual Alignment Table",
+        "",
+        "| Segment | Location | Source | Target | Rationale |",
+        "|---|---|---|---|---|",
+    ]
+    tgt_lines = ["# Translated Document (Target Language Only)", ""]
+    for s in audit["aligned_segments"]:
+        loc = f"p.{s['page']} `{s['block_id']}`" if s.get("page") is not None else f"`{s['block_id']}`"
+        esc = lambda x: str(x).replace("|", "\\|").replace("\n", "<br>")
+        tbl_lines.append(f"| `{s['seg_id']}` | {loc} | {esc(s['source_text'])} | {esc(s['target_text'])} | {esc(s['translation_rationale'])} |")
+        if s["role"] == "title":
+            tgt_lines.append(f"## {s['target_text']}\n")
+        elif s["role"] == "heading":
+            tgt_lines.append(f"### {s['target_text']}\n")
+        else:
+            tgt_lines.append(f"{s['target_text']}\n")
+    bi_table_path.write_text("\n".join(tbl_lines) + "\n", encoding="utf-8")
+    tgt_only_path.write_text("\n".join(tgt_lines) + "\n", encoding="utf-8")
     bi_json_path.write_text(json.dumps({"metrics": audit["metrics"], "segments": audit["aligned_segments"]}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     gloss_out_path.write_text(json.dumps(gloss_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     qa_md_path.write_text(render_qa_report(audit, gloss_data), encoding="utf-8")

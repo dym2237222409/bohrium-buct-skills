@@ -27,6 +27,7 @@ import statistics
 import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
+import zipfile
 import zlib
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -546,6 +547,103 @@ def segment_source(source_path: Path, out_dir: Path, page_allowlist: Optional[se
                     "bbox": b["bbox"],
                     "text": txt,
                 })
+    elif source_path.suffix.lower() == ".json":
+        # Structured JSON / JATS material (preserve real paragraph_id, never fabricate PDF page 1)
+        backend_used = "structured_json"
+        data = json.loads(source_path.read_text(encoding="utf-8", errors="replace"))
+        rows: List[Dict[str, Any]] = []
+        if isinstance(data, dict):
+            if isinstance(data.get("paragraphs"), list):
+                rows = data["paragraphs"]
+            elif isinstance(data.get("passages"), list):
+                rows = data["passages"]
+            elif isinstance(data.get("sections"), list):
+                for sec in data["sections"]:
+                    if isinstance(sec, dict):
+                        stitle = str(sec.get("title") or sec.get("heading") or "Section")
+                        if sec.get("text"):
+                            rows.append({"section": stitle, "text": sec["text"], "paragraph_id": sec.get("id")})
+                        for p_item in sec.get("paragraphs", []):
+                            if isinstance(p_item, dict):
+                                rows.append({**p_item, "section": p_item.get("section") or stitle})
+                            elif isinstance(p_item, str):
+                                rows.append({"section": stitle, "text": p_item})
+            elif isinstance(data.get("text"), str):
+                rows = [{"section": "Document", "text": c.strip()} for c in re.split(r"\n\s*\n", data["text"]) if c.strip()]
+        elif isinstance(data, list):
+            rows = [r if isinstance(r, dict) else {"text": str(r)} for r in data]
+
+        for idx, row in enumerate(rows, start=1):
+            txt = clean_text(str(row.get("text") or row.get("content") or row.get("body") or ""))
+            if not txt:
+                continue
+            pid = str(row.get("paragraph_id") or row.get("id") or f"p_{idx:04d}")
+            sec = str(row.get("section") or row.get("section_path") or row.get("heading") or "Document")
+            role = str(row.get("role") or ("caption" if re.match(r"^(?:Table|Fig\.?|Figure|表|图)\s*\d+", txt, re.I) else "paragraph"))
+            raw_units.append({
+                "page": row.get("page"),  # None when JATS/JSON has no PDF page!
+                "printed_page_label": str(row["page"]) if row.get("page") is not None else pid,
+                "column": 1,
+                "section_path": sec,
+                "role": role,
+                "block_id": pid,
+                "bbox": row.get("bbox"),
+                "text": txt,
+            })
+    elif source_path.suffix.lower() == ".docx":
+        # Native DOCX extraction via stdlib zipfile + XML
+        backend_used = "stdlib_docx"
+        try:
+            with zipfile.ZipFile(source_path, "r") as zf:
+                root = ET.fromstring(zf.read("word/document.xml"))
+            ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+            sec_path = "Document"
+            idx = 0
+            for p_el in root.findall(".//w:p", ns):
+                txt = clean_text("".join(t.text for t in p_el.findall(".//w:t", ns) if t.text))
+                if not txt:
+                    continue
+                idx += 1
+                role = "caption" if re.match(r"^(?:Table|Fig\.?|Figure|表|图)\s*\d+", txt, re.I) else "paragraph"
+                raw_units.append({
+                    "page": None,
+                    "printed_page_label": f"para_{idx:04d}",
+                    "column": 1,
+                    "section_path": sec_path,
+                    "role": role,
+                    "block_id": f"docx_p{idx:04d}",
+                    "bbox": None,
+                    "text": txt,
+                })
+        except Exception as exc:
+            untranslatable_notices.append({"page": None, "reason": f"Failed to parse DOCX: {exc}"})
+    elif source_path.suffix.lower() == ".xml":
+        # JATS / scholarly XML paragraph extraction preserving real @id
+        backend_used = "stdlib_jats_xml"
+        try:
+            root = ET.fromstring(source_path.read_text(encoding="utf-8", errors="replace"))
+            idx = 0
+            for el in root.iter():
+                tag = el.tag.split("}")[-1].lower()
+                if tag in {"article-title", "title", "p"}:
+                    txt = clean_text("".join(el.itertext()))
+                    if not txt:
+                        continue
+                    idx += 1
+                    pid = el.attrib.get("id") or f"xml_p{idx:04d}"
+                    role = "title" if tag == "article-title" else ("heading" if tag == "title" else "paragraph")
+                    raw_units.append({
+                        "page": None,
+                        "printed_page_label": pid,
+                        "column": 1,
+                        "section_path": txt[:80] if role in {"title", "heading"} else "Body",
+                        "role": role,
+                        "block_id": pid,
+                        "bbox": None,
+                        "text": txt,
+                    })
+        except Exception as exc:
+            untranslatable_notices.append({"page": None, "reason": f"Failed to parse XML: {exc}"})
     else:
         # Markdown / LaTeX / Plain text segmentation
         raw_text = source_path.read_text(encoding="utf-8", errors="replace")

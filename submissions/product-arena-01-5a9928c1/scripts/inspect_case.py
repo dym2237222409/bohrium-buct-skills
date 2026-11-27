@@ -78,7 +78,7 @@ def discover_inputs(roots: List[Path]) -> Dict[str, List[Dict[str, Any]]]:
             }
             if any(k in low_name for k in ("glossary", "term", "vocab", "lexicon", "术语", "词表")):
                 glossaries.append(info)
-            elif p.suffix.lower() in {".pdf", ".md", ".txt", ".tex", ".html", ".json"}:
+            elif p.suffix.lower() in {".pdf", ".md", ".txt", ".tex", ".html", ".json", ".docx", ".xml"}:
                 sources.append(info)
     return {"source_candidates": sources, "glossary_files": glossaries}
 

@@ -63,7 +63,7 @@ Inspect `/app/work/case_manifest.json` (and `/input/case.json` + `/input/task.md
 
 ### Step 2 — Layout-Aware Segmentation & Candidate Term Extraction
 
-Run `segment_and_extract_terms.py` (pass `--pages` if `case.json` restricts translation to specific pages):
+Run `segment_and_extract_terms.py` (supports `.pdf`, structured `.json`/JATS, `.xml`, `.docx`, `.md`, `.txt`, `.tex`; pass `--pages` if `case.json` restricts translation to specific pages):
 
 ```bash
 python "${SKILL_DIR}/scripts/segment_and_extract_terms.py" \
@@ -72,9 +72,10 @@ python "${SKILL_DIR}/scripts/segment_and_extract_terms.py" \
   --batch-chars 1800
 ```
 
-Review `/app/work/segmented/term_candidates.json`:
-- Inspect `unassigned_frequent_phrases`, `paper_abbreviation_definitions`, and `polysemy_and_false_friend_alerts` (e.g., `substrate`, `solution`, `regime`, `cell`, `yield`, `strain`, `control`, `significant`).
-- Write `/app/work/agent_terms.json` assigning accurate domain-specific target translations for all high-frequency paper terms and recording explicit `polysemy_decisions` based on the paper's actual discipline.
+**CRITICAL — Satisfy `output_contract` & Preserve Honest Locations**:
+- Check `/input/case.json`'s `output_contract` and `/input/task.md` verbatim before writing outputs; deliver every requested custom filename and top-level `result.json` key.
+- For JATS/JSON/XML/DOCX sources without PDF pages, keep `page: null` and cite true `block_id` / `paragraph_id`—never fabricate `page: 1`.
+- Review `/app/work/segmented/term_candidates.json` (`unassigned_frequent_phrases`, `paper_abbreviation_definitions`, `polysemy_and_false_friend_alerts`) and write `/app/work/agent_terms.json` with domain-grounded translations and `polysemy_decisions`.
 
 ### Step 3 — Build & Lock the Canonical Terminology Table
 
