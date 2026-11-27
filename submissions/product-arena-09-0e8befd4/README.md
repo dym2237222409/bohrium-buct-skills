@@ -30,7 +30,7 @@
 │   └── result_template.json               # 标准结果输出模板
 ├── examples/
 │   ├── minimal_example.md                 # 最小可复现调用与 TriG 示意（明确标注为合成示例）
-│   └── sample_20_assertions.jsonl         # 20 条跨学科合成断言样例（覆盖催化、材料、生医、AI、物理、气候、阴性结果与引用区分）
+│   └── sample_20_assertions.json         # 20 条跨学科合成断言样例（覆盖催化、材料、生医、AI、物理、气候、阴性结果与引用区分）
 └── scripts/
     ├── inspect_case.py                    # 案例与材料探针 + 初始诚实检查点生成
     ├── index_source_passages.py           # 多格式原文索引器（JATS/JSON + PDF + MD/TXT）

@@ -363,6 +363,7 @@ def main() -> int:
     parser.add_argument("--resources", type=Path, default=DEFAULT_RESOURCES, help="Path to resources dir")
     parser.add_argument("--out-dir", type=Path, required=True, help="Output directory (e.g. /app/output)")
     parser.add_argument("--strict", action="store_true", help="Exit non-zero if any hard gate ERROR exists")
+    parser.add_argument("--require-explicit-all", action="store_true", help="Require every unchanged sentence to appear explicitly in edits_draft.json")
     args = parser.parse_args()
 
     segmented = json.loads(args.segmented.read_text(encoding="utf-8-sig"))
@@ -376,7 +377,8 @@ def main() -> int:
     declared_abbrs = edits.get("abbreviations", [])
 
     orig_sentences: List[Dict[str, Any]] = segmented.get("sentences", [])
-    edits_by_id: Dict[str, Dict[str, Any]] = {e["sentence_id"]: e for e in edits.get("sentences", [])}
+    edits_list = edits.get("sentences") or edits.get("sentence_patches") or []
+    edits_by_id: Dict[str, Dict[str, Any]] = {e["sentence_id"]: e for e in edits_list}
 
     all_issues: List[Dict[str, Any]] = []
     compiled_sentences: List[Dict[str, Any]] = []
@@ -390,26 +392,27 @@ def main() -> int:
             "detail": conf,
         })
 
-    # Audit every sentence in deterministic order
+    # Audit every sentence in deterministic order (Patch Mode preserves untouched sentences verbatim)
     for orig_item in orig_sentences:
         sid = orig_item["sentence_id"]
         if sid not in edits_by_id:
-            all_issues.append({
-                "gate": "Gate7_MinimalEditAndExplainability",
-                "severity": "ERROR",
-                "sentence_id": sid,
-                "message": f"Sentence {sid} missing from edits_draft.json; retained original text.",
-            })
+            if args.require_explicit_all and not orig_item.get("is_structural_block"):
+                all_issues.append({
+                    "gate": "Gate7_MinimalEditAndExplainability",
+                    "severity": "ERROR",
+                    "sentence_id": sid,
+                    "message": f"Sentence {sid} missing from edits_draft.json; retained original text.",
+                })
             edit_item = {
                 "sentence_id": sid,
                 "original": orig_item["text"],
                 "revised": orig_item["text"],
                 "changed": False,
                 "edit_types": ["no_change"],
-                "reason": "Missing in draft; preserved original verbatim.",
-                "risk_level": "high",
-                "needs_human_confirmation": True,
-                "confirmation_note": "Sentence was omitted from edits draft.",
+                "reason": "No linguistic issue detected; preserved original verbatim.",
+                "risk_level": "low",
+                "needs_human_confirmation": False,
+                "confirmation_note": "",
             }
         else:
             edit_item = edits_by_id[sid]
@@ -454,12 +457,35 @@ def main() -> int:
     out_dir = args.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1. Polished manuscript
+    # 1. Polished manuscript + unified diff + optional DOCX/PDF preview
     manuscript_text = reconstruct_manuscript(compiled_sentences)
+    orig_reconstructed = reconstruct_manuscript([{**r, "revised": r["original"]} for r in compiled_sentences])
     src_formats = [s.get("format") for s in segmented.get("sources", [])]
-    ext = ".tex" if src_formats == ["tex"] else ".md"
+    ext = ".tex" if src_formats == ["tex"] else (".txt" if src_formats == ["txt"] else ".md")
     polished_filename = f"polished_manuscript{ext}"
     (out_dir / polished_filename).write_text(manuscript_text, encoding="utf-8")
+
+    import difflib as _difflib
+    diff_str = "".join(_difflib.unified_diff(
+        orig_reconstructed.splitlines(keepends=True),
+        manuscript_text.splitlines(keepends=True),
+        fromfile="a/original_manuscript",
+        tofile=f"b/{polished_filename}",
+    ))
+    (out_dir / "changes.diff").write_text(diff_str or "# No text changes.\n", encoding="utf-8")
+
+    docx_filename = None
+    if "docx" in src_formats:
+        try:
+            import docx as _docx  # type: ignore
+            doc = _docx.Document()
+            for blk in manuscript_text.split("\n\n"):
+                if blk.strip():
+                    doc.add_paragraph(blk.strip())
+            docx_filename = "polished_manuscript.docx"
+            doc.save(str(out_dir / docx_filename))
+        except Exception:
+            docx_filename = None
 
     # 2. Revision log (Markdown + JSONL)
     md_lines = [

@@ -13,6 +13,8 @@ import re
 import shutil
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
+import zipfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -20,6 +22,22 @@ from typing import Any, Dict, List, Optional, Tuple
 TEXT_EXTS = {".md", ".txt", ".tex", ".rst", ".csv", ".tsv", ".yaml", ".yml"}
 BIB_EXTS = {".bib", ".ris"}
 JSON_EXTS = {".json", ".jsonl"}
+
+
+def extract_docx_text(path: Path) -> str:
+    try:
+        with zipfile.ZipFile(path, "r") as zf:
+            xml_bytes = zf.read("word/document.xml")
+        root = ET.fromstring(xml_bytes)
+        ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+        paras = []
+        for p in root.findall(".//w:p", ns):
+            line = "".join(t.text for t in p.findall(".//w:t", ns) if t.text).strip()
+            if line:
+                paras.append(line)
+        return "\n\n".join(paras)
+    except Exception:
+        return ""
 
 
 def safe_read_text(path: Path) -> str:
@@ -363,6 +381,12 @@ def main() -> int:
         elif ext in TEXT_EXTS:
             text = safe_read_text(path)
             if path.name != "task.md":
+                author_evidence.append(extract_author_evidence(text, rel))
+                for ref in extract_inline_refs_from_text(text, rel):
+                    literature_by_id.setdefault(ref["ref_id"], ref)
+        elif ext == ".docx":
+            text = extract_docx_text(path)
+            if text:
                 author_evidence.append(extract_author_evidence(text, rel))
                 for ref in extract_inline_refs_from_text(text, rel):
                     literature_by_id.setdefault(ref["ref_id"], ref)

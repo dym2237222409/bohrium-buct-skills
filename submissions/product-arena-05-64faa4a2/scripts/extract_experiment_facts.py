@@ -9,7 +9,11 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
+import subprocess
 import sys
+import xml.etree.ElementTree as ET
+import zipfile
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -19,7 +23,63 @@ SKILL_ROOT = Path(__file__).resolve().parent.parent
 SCANNABLE_EXTS = {
     ".yaml", ".yml", ".json", ".jsonl", ".toml", ".ini", ".cfg",
     ".py", ".sh", ".bash", ".log", ".out", ".txt", ".md", ".tex", ".csv", ".tsv",
+    ".ipynb", ".docx", ".pdf",
 }
+
+
+def extract_ipynb_text(path: Path) -> str:
+    try:
+        nb = json.loads(safe_read_text(path))
+        chunks: List[str] = []
+        for cell in nb.get("cells", []):
+            src = cell.get("source", [])
+            chunks.append("".join(src) if isinstance(src, list) else str(src))
+            for out in cell.get("outputs", []):
+                if "text" in out:
+                    t = out["text"]
+                    chunks.append("".join(t) if isinstance(t, list) else str(t))
+        return "\n".join(chunks)
+    except Exception:
+        return ""
+
+
+def extract_docx_text(path: Path) -> str:
+    try:
+        with zipfile.ZipFile(path, "r") as zf:
+            xml_bytes = zf.read("word/document.xml")
+        root = ET.fromstring(xml_bytes)
+        ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+        return "\n".join(
+            "".join(t.text for t in p.findall(".//w:t", ns) if t.text).strip()
+            for p in root.findall(".//w:p", ns)
+        )
+    except Exception:
+        return ""
+
+
+def extract_pdf_text(path: Path) -> str:
+    try:
+        import fitz  # type: ignore
+        doc = fitz.open(str(path))
+        txt = "\n".join(pg.get_text("text") for pg in doc)
+        doc.close()
+        return txt
+    except Exception:
+        pass
+    try:
+        import pypdf  # type: ignore
+        reader = pypdf.PdfReader(str(path))
+        return "\n".join(p.extract_text() or "" for p in reader.pages)
+    except Exception:
+        pass
+    if shutil.which("pdftotext"):
+        try:
+            proc = subprocess.run(["pdftotext", str(path), "-"], capture_output=True, text=True, timeout=30, check=False)
+            if proc.returncode == 0:
+                return proc.stdout
+        except Exception:
+            pass
+    return ""
 
 
 def safe_read_text(path: Path) -> str:
@@ -237,9 +297,18 @@ def main() -> int:
         files_indexed.append({"path": rel, "ext": ext, "size_bytes": path.stat().st_size})
         if ext not in SCANNABLE_EXTS:
             continue
-        text = safe_read_text(path)
         if path.name in {"case.json", "task.md"}:
             continue
+        if ext == ".ipynb":
+            text = extract_ipynb_text(path)
+        elif ext == ".docx":
+            text = extract_docx_text(path)
+        elif ext == ".pdf":
+            text = extract_pdf_text(path)
+            if not text.strip():
+                warnings.append(f"PDF text extraction unavailable or empty for {rel}.")
+        else:
+            text = safe_read_text(path)
 
         # Collect numeric tokens for grounding
         for nm in re.findall(r"(?<![A-Za-z0-9_])-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?", text):

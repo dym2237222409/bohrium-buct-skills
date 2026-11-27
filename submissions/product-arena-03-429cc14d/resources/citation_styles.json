@@ -92,6 +92,65 @@
       "etal_zh": "et al.",
       "include_doc_type_code": false,
       "required_fields": ["authors", "title", "year", "venue"]
+    },
+    "nature": {
+      "label": "Nature Style (Superscript Sequential Numeric)",
+      "mode": "numeric",
+      "order": "first_appearance",
+      "in_text_open": "",
+      "in_text_close": "",
+      "in_text_sep": ",",
+      "range_sep": "–",
+      "compress_ranges": true,
+      "min_range_length": 3,
+      "superscript_default": true,
+      "max_authors_before_etal": 5,
+      "etal_en": "et al.",
+      "etal_zh": "et al.",
+      "include_doc_type_code": false,
+      "required_fields": ["authors", "title", "year", "venue"]
+    },
+    "acs": {
+      "label": "ACS Style (Chemistry Sequential Numeric)",
+      "mode": "numeric",
+      "order": "first_appearance",
+      "in_text_open": "(",
+      "in_text_close": ")",
+      "in_text_sep": ",",
+      "range_sep": "–",
+      "compress_ranges": true,
+      "min_range_length": 3,
+      "max_authors_before_etal": 10,
+      "etal_en": "et al.",
+      "etal_zh": "et al.",
+      "include_doc_type_code": false,
+      "required_fields": ["authors", "title", "year", "venue"]
+    },
+    "chicago_author_year": {
+      "label": "Chicago 17th (Author-Date)",
+      "mode": "author_year",
+      "order": "alphabetical",
+      "in_text_open": "(",
+      "in_text_close": ")",
+      "in_text_sep": "; ",
+      "max_authors_before_etal": 3,
+      "etal_en": "et al.",
+      "etal_zh": "等",
+      "include_doc_type_code": false,
+      "required_fields": ["authors", "title", "year", "venue"]
+    },
+    "latex_bibtex": {
+      "label": "LaTeX BibTeX (Canonical \\cite{key} + Clean .bib)",
+      "mode": "latex_cite",
+      "order": "first_appearance",
+      "in_text_open": "\\cite{",
+      "in_text_close": "}",
+      "in_text_sep": ",",
+      "max_authors_before_etal": 6,
+      "etal_en": "et al.",
+      "etal_zh": "等",
+      "include_doc_type_code": false,
+      "required_fields": ["authors", "title", "year", "venue"]
     }
   }
 }

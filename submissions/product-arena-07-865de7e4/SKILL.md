@@ -38,11 +38,15 @@ When executed in an automated evaluation container (installed at `/skills/weekly
 ## 3. End-to-End Execution Workflow
 
 ### Step 1 — Inspect Project Tree, Static Issues & TeX Environment
+Resolve `SKILL_DIR` (`/skills/weekly-skill` inside Harbor, or local skill directory) and read `/input/case.json` (`output_contract`) + `/input/task.md` verbatim first so every requested output filename and `result.json` key is honored:
 ```bash
-python3 /skills/weekly-skill/scripts/inspect_latex_project.py \
+SKILL_DIR="/skills/weekly-skill"
+[ -d "$SKILL_DIR/scripts" ] || SKILL_DIR="$(pwd)"
+python3 "${SKILL_DIR}/scripts/inspect_latex_project.py" \
   --input-dir /input \
   --out /app/work/project_inspection.json
 ```
+After compiling in Step 3, `compile_and_audit_latex.py` automatically verifies rendered PDF text (`pdf_text_audit`) for zero leftover `??` / `[?]` markers and probes `installed_cjk_fonts` via `fc-list` whenever CJK text is detected, so font or reference bugs can be fixed in one deterministic pass.
 This deterministic stdlib script:
 - Identifies the main `.tex` entry file (scoring `\documentclass`, `\begin{document}`, `case.json` hints), recursively resolves `\input`/`\include`, and inventories `.bib`, `.cls`, `.sty`, and graphic assets.
 - Probes available TeX binaries (`pdflatex`, `xelatex`, `lualatex`, `bibtex`, `biber`, `latexmk`, `kpsewhich`) and PDF previewers (`pdftoppm`, `fitz`/PyMuPDF, `gs`).

@@ -37,12 +37,15 @@ When executed in an automated evaluation container (installed at `/skills/weekly
 ## 3. End-to-End Execution Workflow
 
 ### Step 1 — Extract Line-Anchored Experimental Facts & Cross-File Conflicts
+Resolve `SKILL_DIR` (`/skills/weekly-skill` inside Harbor, or local skill directory) and run `scripts/extract_experiment_facts.py`:
 ```bash
-python3 /skills/weekly-skill/scripts/extract_experiment_facts.py \
+SKILL_DIR="/skills/weekly-skill"
+[ -d "$SKILL_DIR/scripts" ] || SKILL_DIR="$(pwd)"
+python3 "${SKILL_DIR}/scripts/extract_experiment_facts.py" \
   --input-dir /input \
   --out /app/work/experiment_facts.json
 ```
-This deterministic stdlib script parses `.yaml`/`.yml`/`.json`/`.toml`/`.ini`/`.cfg`/`.py`/`.sh`/`.log`/`.txt`/`.csv`/`.tsv`/`.md`/`.tex` files to produce:
+Read `/input/case.json` (`output_contract`) and `/input/task.md` verbatim immediately and ensure every requested custom output filename and top-level `result.json` field is fulfilled. This deterministic script parses `.yaml`/`.yml`/`.json`/`.toml`/`.ini`/`.cfg`/`.py`/`.sh`/`.ipynb`/`.log`/`.txt`/`.csv`/`.tsv`/`.md`/`.tex`/`.docx`/`.pdf` files and exports both `parameter_table.md` and booktabs `parameter_table.tex`.
 - `parameter_facts`: Every key/value pair with normalized canonical name, raw value, unit (if any), and exact `source_file:line`.
 - `cross_file_conflicts`: Automatic detection when the same canonical parameter (e.g., `learning_rate`, `batch_size`, `epochs`, `seed`) holds differing values across files (e.g., config default vs. executed CLI/log).
 - `environment_and_hardware`: Detected GPU/CPU, Python/framework versions, random seeds, repeat counts, and CLI commands.

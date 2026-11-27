@@ -72,12 +72,13 @@ Applies 4 deterministic tiers:
 - **Anti-False-Merge Guard**: Distinct valid DOIs or same-author-same-year papers with distinct titles (`similarity < 0.75`) are explicitly recorded under `kept_separate_audit` and **never** merged.
 - **Field Provenance & Conflicts**: Enriches complementary missing fields (e.g., DOI from BibTeX, abstract from RIS, Chinese title from CNKI) without inventing data; any conflicting field (e.g., different years or page ranges) is logged in `field_conflicts` for human confirmation.
 
-### Step 3: Build Claim-Level Citation Plan (`citation_plan.json`)
-Read `/app/work/parsed_case.json`, `/app/work/deduped_refs.json`, and `/input/task.md`.
+### Step 3: Build Claim-Level Citation Plan (`citation_plan.json` — Supports Zero-Copy Patch Mode!)
+Read `/app/work/parsed_case.json`, `/app/work/deduped_refs.json`, `/input/case.json` (`output_contract`), and `/input/task.md`.
 Write `/app/work/citation_plan.json` following `templates/citation_plan_schema.json`:
-1. Select the target citation style (`gbt7714_numeric`, `gbt7714_author_year`, `apa7`, `ieee`, `vancouver`) from the task specification (default to `gbt7714_numeric` if unspecified and log in `uncertainty`).
-2. For every manuscript sentence requiring citation insertion, relocation, replacement, or deletion, place canonical `{{CITE:REF001}}` or `{{CITE:REF001,REF002}}` placeholders at the exact claim clause (and record `old_markers` when replacing existing markers).
-3. Record a **claim-to-reference verification entry** for every cited `(sentence_id, ref_id)` pair:
+1. **Satisfy `output_contract` verbatim**: Check exact requested output filenames (e.g., `.tex`, `.bib`, `.docx`, `.md`) and top-level `result.json` fields before finalizing.
+2. Select the target citation style (`gbt7714_numeric`, `gbt7714_author_year`, `apa7`, `ieee`, `vancouver`, `nature`, `acs`, `chicago_author_year`, `latex_bibtex`) from the task specification (default to `gbt7714_numeric` if unspecified and log in `uncertainty`).
+3. **Zero-Copy Patch Mode (CRITICAL for long manuscripts)**: You only need to list sentences whose citations are being inserted, relocated, replaced, renumbered, or deleted in `sentences` (or `sentence_patches`) using canonical `{{CITE:REF001}}` / `{{CITE:REF001,REF002}}` placeholders. `sync_format_and_verify.py` automatically merges your patches onto the complete `parsed_case.json` manuscript backbone so **zero untouched paragraphs are ever dropped**, cutting token usage by >60%! (For `.tex` manuscripts, `manuscript_updated.tex` + `references_clean.bib` are emitted natively.)
+4. Record a **claim-to-reference verification entry** for every cited `(sentence_id, ref_id)` pair:
    - `alignment_status`: `supported` | `partial_support` | `mismatch` | `insufficient_evidence_in_metadata` | `fabricated_or_unverified`
    - `evidence_basis`: Concrete comparison between the manuscript claim and the reference's title/abstract/full-text snippet in the provided inputs. **Never** claim `supported` if only a bare title exists and the quantitative claim cannot be verified—mark `insufficient_evidence_in_metadata` honestly!
 

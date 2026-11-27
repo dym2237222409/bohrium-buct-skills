@@ -36,7 +36,7 @@ Bundled UTF-8 text resources:
 - `scripts/build_and_validate_nanopubs.py`: 6-gate mechanical validator + deduplicator + conflict detector + TriG/JSON-LD/N-Quads/JSONL serializer.
 - `scripts/self_test.py`: Positive & negative quality-gate self-test.
 - `resources/controlled_relations.json`: 17 controlled scientific relations mapped to OBO RO/SIO/SEPIO IRIs + 6 `evidence_types`.
-- `resources/field_dictionary.json`, `templates/assertions_draft_schema.json`, `templates/result_template.json`, `examples/minimal_example.md`, and `examples/sample_20_assertions.jsonl` (20 reusable synthetic examples).
+- `resources/field_dictionary.json`, `templates/assertions_draft_schema.json`, `templates/result_template.json`, `examples/minimal_example.md`, and `examples/sample_20_assertions.json` (20 reusable synthetic examples).
 
 ---
 
@@ -63,13 +63,18 @@ python "${SKILL_DIR}/scripts/index_source_passages.py" \
 
 Read `/app/work/indexed/indexed_passages.json`. Note whether each source uses `jats_paragraph_id` (`page: null`, do NOT fabricate PDF page numbers) or `pdf_page_bbox` (`page` + `bbox`), and record each paper's own independent metadata (`source_id`, `doi`, `title`, `authors`, `year`).
 
-### Step 3 — Decompose Claims into Atomic Assertions (`/app/work/assertions_draft.json`)
+### Step 3 — Decompose Claims into Comprehensive Atomic Assertions (`/app/work/assertions_draft.json`)
+
+**CRITICAL — Satisfy `output_contract` & Aim for High Recall + Precision**:
+- First inspect `/input/case.json`'s `output_contract` and `/input/task.md` verbatim. Ensure every requested output file path and top-level `result.json` key is satisfied.
+- Do **not** stop at 3–5 toy assertions when the paper contains 15–30 distinct empirical/computational/limitation findings! Cover every major Results, Quantitative Comparison, Mechanism, Control/Null Result, and Limitation claim across **all** provided papers while keeping each assertion strictly atomic and falsifiable.
 
 Following `templates/assertions_draft_schema.json` and `resources/controlled_relations.json`:
 1. Split compound conclusions (e.g., *"X increases A by 10% while decreasing B by 5%"*) into **two separate atomic assertions** (`NP001`, `NP002`).
 2. Select `relation` strictly from `resources/controlled_relations.json` (17 IRIs) and `evidence_type` strictly from the 6 allowed categories (never mark cited background literature as `direct_experimental`).
-3. Keep `claim_text` to **1 concise falsifiable sentence** (≤ 280 chars) and keep `minimal_evidence_quote` to the **exact verbatim substring** (18–480 chars) from `indexed_passages.json` that minimally suffices to verify the claim.
-4. Put unsubstantiated or unreported candidate questions in `unreported_or_rejected_claims` rather than fabricating assertions.
+3. Keep `claim_text` to **1 concise falsifiable sentence** (≤ 280 chars) and keep `minimal_evidence_quote` to the **exact verbatim substring** (18–480 chars) from `indexed_passages.json` that minimally suffices to verify the claim (ellipses `...` are allowed to trim irrelevant parenthetical clauses while preserving exact verbatim segments).
+4. Include null/negative findings (`no_significant_effect_on`, `independent_of`, `negated: true`) and explicit boundary conditions (`conditions_and_scope`) whenever stated in the paper.
+5. Put unsubstantiated or unreported candidate questions in `unreported_or_rejected_claims` rather than fabricating assertions.
 
 ### Step 4 — Run 6-Gate Quality Audit & Multi-Format Export
 

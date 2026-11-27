@@ -60,6 +60,19 @@ def count_sentences(text: str) -> int:
     return len(parts)
 
 
+def quote_matches_passage(quote: str, passage_text: str) -> bool:
+    if not quote:
+        return False
+    p_norm = compact_norm(passage_text)
+    if not p_norm:
+        return False
+    # Support ellipses ("..." / "…") in trimmed verbatim quotes by checking each substantial segment
+    segs = [s.strip() for s in re.split(r"\.{3,}|…|\[\.\.\.\]", quote) if len(compact_norm(s)) >= 10]
+    if segs:
+        return all(compact_norm(s)[:100] in p_norm for s in segs)
+    return compact_norm(quote[:100]) in p_norm
+
+
 def validate_and_build(index_data: Dict[str, Any], draft: Dict[str, Any]) -> Dict[str, Any]:
     passages_by_id = {p["passage_id"]: p for p in index_data.get("passages", [])}
     passages_by_para = {
@@ -149,7 +162,7 @@ def validate_and_build(index_data: Dict[str, Any], draft: Dict[str, Any]) -> Dic
             elif len(quote) > thresh.get("max_evidence_quote_chars", 480):
                 warnings.append(f"[{aid}] evidence_too_bloated: quote is {len(quote)} chars; trim to minimal sufficient snippet.")
 
-            if quote and compact_norm(quote[:100]) in compact_norm(p_obj["text"]):
+            if quote_matches_passage(quote, p_obj["text"]):
                 grounded_count += 1
             else:
                 errors.append(f"[{aid}] evidence_not_in_source: minimal_evidence_quote could not be verbatim-matched in passage '{p_obj['passage_id']}'.")
@@ -395,6 +408,7 @@ def main() -> int:
     jld_p.write_text(json.dumps(serialize_jsonld(res["nanopublications"]), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     nq_p.write_text(serialize_nquads(res["nanopublications"]), encoding="utf-8")
     jsonl_p.write_text("\n".join(json.dumps(n, ensure_ascii=False) for n in res["nanopublications"]) + "\n", encoding="utf-8")
+    (out_dir / "nanopublications.json").write_text(json.dumps(res["nanopublications"], ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     # Optional rdflib TriG syntax verification if installed in container
     rdflib_verified = None

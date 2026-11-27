@@ -1,6 +1,6 @@
 # 最小调用示例（Minimal Reproducible Example）
 
-> **重要声明（示例标注）**：本文件与 `examples/sample_20_assertions.jsonl` 中展示的所有断言、URI、TriG 与 JSON-LD 片段均为**合成可复用示例（Synthetic Example）**，仅用于演示 `scipdf-nanopub-extractor` Skill 的四图结构、受控词表与校验逻辑，**不代表任何平台正式评测案例结果**。
+> **重要声明（示例标注）**：本文件与 `examples/sample_20_assertions.json` 中展示的所有断言、URI、TriG 与 JSON-LD 片段均为**合成可复用示例（Synthetic Example）**，仅用于演示 `scipdf-nanopub-extractor` Skill 的四图结构、受控词表与校验逻辑，**不代表任何平台正式评测案例结果**。
 
 ---
 

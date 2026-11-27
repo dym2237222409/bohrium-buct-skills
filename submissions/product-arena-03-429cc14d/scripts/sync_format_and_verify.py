@@ -264,7 +264,7 @@ def main() -> int:
     style_name = plan.get("target_style") or parsed.get("target_style") or "gbt7714_numeric"
     style_cfg = styles_all.get(style_name, styles_all["gbt7714_numeric"])
     mode = style_cfg.get("mode", "numeric")
-    superscript = bool(plan.get("superscript_numeric", False))
+    superscript = bool(plan.get("superscript_numeric", style_cfg.get("superscript_default", False)))
 
     ref_by_id: Dict[str, Dict[str, Any]] = {r["ref_id"]: r for r in deduped.get("references", [])}
     key_to_ref: Dict[str, str] = deduped.get("cite_key_to_ref_id", {})
@@ -272,10 +272,34 @@ def main() -> int:
     issues: List[Dict[str, Any]] = []
     human_review: List[Dict[str, Any]] = []
 
-    # Step A: Scan placeholders in exact manuscript order to collect cited ref_ids
+    # Step A: Merge zero-copy sentence patches onto full parsed manuscript so NO untouched sentences are ever dropped!
     ordered_cited_ids: List[str] = []
     cited_pairs: List[Tuple[str, str]] = []
-    sentences_plan: List[Dict[str, Any]] = plan.get("sentences", [])
+    raw_plan_sents: List[Dict[str, Any]] = plan.get("sentences") or plan.get("sentence_patches") or []
+    orig_parsed_sents: List[Dict[str, Any]] = parsed.get("sentences", [])
+    if orig_parsed_sents and raw_plan_sents:
+        plan_by_sid = {s["sentence_id"]: s for s in raw_plan_sents if "sentence_id" in s}
+        orig_sids = {s["sentence_id"] for s in orig_parsed_sents}
+        # If plan explicitly covers a subset (patch mode), preserve all untouched sentences in original order
+        if len(plan_by_sid) < len(orig_parsed_sents) and set(plan_by_sid.keys()).issubset(orig_sids):
+            sentences_plan: List[Dict[str, Any]] = []
+            for osent in orig_parsed_sents:
+                sid = osent["sentence_id"]
+                if sid in plan_by_sid:
+                    merged = {**osent, **plan_by_sid[sid]}
+                    merged.setdefault("original_text", osent.get("text", ""))
+                    sentences_plan.append(merged)
+                else:
+                    sentences_plan.append({
+                        **osent,
+                        "original_text": osent.get("text", ""),
+                        "text_with_placeholders": osent.get("text", ""),
+                        "action": "unchanged",
+                    })
+        else:
+            sentences_plan = raw_plan_sents
+    else:
+        sentences_plan = raw_plan_sents
 
     def resolve_id(tok: str) -> str:
         t = tok.strip()
@@ -327,7 +351,7 @@ def main() -> int:
     # Step B: Assign numbers (numeric) or alphabetical order + disambiguation letters (author-year)
     ref_number_map: Dict[str, int] = {}
     ref_year_label_map: Dict[str, str] = {}
-    if mode == "numeric":
+    if mode in ("numeric", "latex_cite"):
         final_bib_ids = list(ordered_cited_ids)
         for i, rid in enumerate(final_bib_ids, start=1):
             ref_number_map[rid] = i
@@ -373,7 +397,13 @@ def main() -> int:
                 tag = f"[UNVERIFIED:{','.join(rids)}]"
                 new_markers_in_sent.append(tag)
                 return tag
-            if mode == "numeric":
+            if mode == "latex_cite":
+                keys = [
+                    (ref_by_id[rid]["cite_keys"][0] if ref_by_id[rid].get("cite_keys") else rid)
+                    for rid in rids
+                ]
+                marker = f"\\cite{{{','.join(keys)}}}"
+            elif mode == "numeric":
                 nums = [ref_number_map[rid] for rid in rids]
                 inner = compress_numeric_list(
                     nums,
@@ -544,8 +574,30 @@ def main() -> int:
             "merged_raw_ids": r.get("merged_raw_ids", []),
         })
 
-    manuscript_full = "\n\n".join(blocks) + "\n\n## References\n\n" + "\n\n".join(e["formatted"] for e in formatted_bib_entries) + "\n"
+    manuscript_body = "\n\n".join(blocks)
+    manuscript_full = manuscript_body + "\n\n## References\n\n" + "\n\n".join(e["formatted"] for e in formatted_bib_entries) + "\n"
     (out_dir / "manuscript_updated.md").write_text(manuscript_full, encoding="utf-8")
+
+    # Preserve native .tex / .docx deliverables when source manuscript is LaTeX or Word
+    src_exts = {Path(str(s.get("path", s.get("file", "")))).suffix.lower() for s in parsed.get("sources", []) if isinstance(s, dict)}
+    manuscript_tex_name = None
+    if mode == "latex_cite" or ".tex" in src_exts:
+        manuscript_tex_name = "manuscript_updated.tex"
+        (out_dir / manuscript_tex_name).write_text(manuscript_body + "\n", encoding="utf-8")
+
+    manuscript_docx_name = None
+    if ".docx" in src_exts:
+        try:
+            import docx as _docx  # type: ignore
+            doc = _docx.Document()
+            for blk in manuscript_full.split("\n\n"):
+                if blk.strip():
+                    doc.add_paragraph(blk.strip())
+            manuscript_docx_name = "manuscript_updated.docx"
+            doc.save(str(out_dir / manuscript_docx_name))
+        except Exception:
+            manuscript_docx_name = None
+
     (out_dir / "references_formatted.md").write_text("\n".join(bib_md_lines), encoding="utf-8")
 
     cited_ref_objs = [ref_by_id[rid] for rid in final_bib_ids]

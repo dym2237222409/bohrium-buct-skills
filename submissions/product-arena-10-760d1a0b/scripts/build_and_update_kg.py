@@ -45,6 +45,18 @@ def norm_key(s: str) -> str:
     return re.sub(r"[^a-z0-9\u4e00-\u9fff]+", "", s.lower())
 
 
+def quote_matches(quote: str, passage_text: str) -> bool:
+    if not quote:
+        return False
+    p_norm = norm_key(passage_text)
+    if not p_norm:
+        return False
+    segs = [s.strip() for s in re.split(r"\.{3,}|…|\[\.\.\.\]", quote) if len(norm_key(s)) >= 10]
+    if segs:
+        return all(norm_key(s)[:90] in p_norm for s in segs)
+    return norm_key(quote[:90]) in p_norm
+
+
 def build_or_update(
     corpus_index: Dict[str, Any],
     draft: Dict[str, Any],
@@ -104,7 +116,7 @@ def build_or_update(
             if p_obj is None:
                 errors.append(f"[{label}] provenance[{pi}] unresolved (source_id='{sid}', paragraph_id='{pid}') in corpus_index.json.")
                 continue
-            if not quote or norm_key(quote[:90]) not in norm_key(p_obj["text"]):
+            if not quote_matches(quote, p_obj["text"]):
                 errors.append(f"[{label}] provenance[{pi}] verbatim_quote not found in passage '{p_obj['uid']}'.")
                 continue
             verified.append({
@@ -406,33 +418,83 @@ def main() -> int:
     (out_dir / "knowledge_graph.mmd").write_text(export_mermaid(kg), encoding="utf-8")
     (out_dir / "kg_preview.svg").write_text(export_svg_preview(kg), encoding="utf-8")
 
-    # Optional PNG preview if matplotlib is available
+    # Render real PNG preview via multi-backend fallback: matplotlib -> Pillow -> cairosvg -> rsvg-convert
     png_rendered = False
+    png_path = out_dir / "kg_preview.png"
+    svg_path = out_dir / "kg_preview.svg"
     try:
         import matplotlib  # type: ignore
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt  # type: ignore
-        fig, ax = plt.subplots(figsize=(9, 6), dpi=140)
+        fig, ax = plt.subplots(figsize=(10, 6.8), dpi=150)
         n_list = kg["nodes"]
         cnt = max(1, len(n_list))
         pos = {n["node_id"]: (math.cos(2 * math.pi * i / cnt), math.sin(2 * math.pi * i / cnt)) for i, n in enumerate(n_list)}
         for e in kg["edges"]:
             x1, y1 = pos[e["source_node_id"]]
             x2, y2 = pos[e["target_node_id"]]
-            ax.annotate("", xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(arrowstyle="->", color="#64748b", lw=1.4))
+            ec = "#ef4444" if e["relation_type"] == "CONTRADICTS" else "#64748b"
+            ax.annotate("", xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(arrowstyle="->", color=ec, lw=1.4))
             ax.text((x1 + x2) / 2, (y1 + y2) / 2, e["relation_type"], fontsize=7, ha="center", color="#1e293b")
         for n in n_list:
             x, y = pos[n["node_id"]]
-            ax.scatter([x], [y], s=420, zorder=3)
-            ax.text(x, y - 0.14, f"{n['node_id']}: {n['canonical_name'][:24]}", fontsize=8, ha="center")
+            ax.scatter([x], [y], s=440, zorder=3)
+            ax.text(x, y - 0.14, f"{n['node_id']}: {n['canonical_name'][:26]}", fontsize=8, ha="center")
         ax.axis("off")
         ax.set_title(f"Literature Knowledge Graph ({len(n_list)} nodes, {len(kg['edges'])} edges)")
         fig.tight_layout()
-        fig.savefig(str(out_dir / "kg_preview.png"))
+        fig.savefig(str(png_path))
         plt.close(fig)
-        png_rendered = True
+        png_rendered = png_path.is_file()
     except Exception:
         png_rendered = False
+
+    if not png_rendered:
+        try:
+            import cairosvg  # type: ignore
+            cairosvg.svg2png(url=str(svg_path), write_to=str(png_path))
+            png_rendered = png_path.is_file()
+        except Exception:
+            pass
+
+    if not png_rendered:
+        try:
+            import shutil as _shutil, subprocess as _sub
+            if _shutil.which("rsvg-convert"):
+                _sub.run(["rsvg-convert", "-o", str(png_path), str(svg_path)], check=False, timeout=20)
+                png_rendered = png_path.is_file()
+            elif _shutil.which("inkscape"):
+                _sub.run(["inkscape", str(svg_path), "--export-type=png", f"--export-filename={png_path}"], check=False, timeout=30)
+                png_rendered = png_path.is_file()
+        except Exception:
+            pass
+
+    if not png_rendered:
+        try:
+            from PIL import Image, ImageDraw  # type: ignore
+            w, h = 960, 640
+            img = Image.new("RGB", (w, h), (15, 23, 42))
+            draw = ImageDraw.Draw(img)
+            n_list = kg["nodes"]
+            cnt = max(1, len(n_list))
+            cx, cy, rad = w / 2.0, h / 2.0, 220.0
+            pos = {n["node_id"]: (cx + rad * math.cos(2 * math.pi * i / cnt), cy + rad * math.sin(2 * math.pi * i / cnt)) for i, n in enumerate(n_list)}
+            draw.text((20, 16), f"Literature KG Preview ({len(n_list)} nodes, {len(kg['edges'])} edges)", fill=(248, 250, 252))
+            for e in kg["edges"]:
+                x1, y1 = pos[e["source_node_id"]]
+                x2, y2 = pos[e["target_node_id"]]
+                col = (239, 68, 68) if e["relation_type"] == "CONTRADICTS" else (148, 163, 184)
+                draw.line([(x1, y1), (x2, y2)], fill=col, width=2)
+                draw.text(((x1 + x2) / 2, (y1 + y2) / 2 - 8), e["relation_type"], fill=(203, 213, 225))
+            for n in n_list:
+                x, y = pos[n["node_id"]]
+                draw.ellipse([x - 18, y - 18, x + 18, y + 18], fill=(37, 99, 235), outline=(226, 232, 240), width=2)
+                draw.text((x - 14, y - 6), n["node_id"], fill=(255, 255, 255))
+                draw.text((x - 45, y + 22), n["canonical_name"][:22], fill=(241, 245, 249))
+            img.save(str(png_path))
+            png_rendered = png_path.is_file()
+        except Exception:
+            png_rendered = False
 
     audit_lines = [
         "# Literature Knowledge Graph Alignment & Grounding Audit Report",

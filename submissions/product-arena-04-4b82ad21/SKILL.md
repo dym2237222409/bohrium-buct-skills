@@ -36,17 +36,17 @@ When executed in an automated evaluation container (installed at `/skills/weekly
 ## 3. End-to-End Execution Workflow
 
 ### Step 1 — Inspect & Index All Input Materials (Deterministic Script)
-Run `scripts/inspect_materials.py` before drafting a single sentence:
+Resolve `SKILL_DIR` (`/skills/weekly-skill` inside Harbor, or current skill directory locally) and run `scripts/inspect_materials.py` before drafting a single sentence:
 ```bash
-python3 /skills/weekly-skill/scripts/inspect_materials.py \
+SKILL_DIR="/skills/weekly-skill"
+[ -d "$SKILL_DIR/scripts" ] || SKILL_DIR="$(pwd)"
+python3 "${SKILL_DIR}/scripts/inspect_materials.py" \
   --input-dir /input \
   --out /app/work/material_manifest.json
 ```
-This script:
-- Parses `/input/case.json` and `/input/task.md` for `case_id`, target language, citation format (`numeric`, `author-year`, `latex-cite`), audience, word/length bounds, and `output_contract` keys.
-- Indexes all bibliography/literature sources (`.bib`, `.json`, `.jsonl`, `.md`, `.txt`, `.csv`, `.tex`, and `.pdf` via stdlib/optional extractors) into `literature_inventory` with canonical `ref_id`, `authors`, `year`, `title`, `venue`, and `source_file`.
-- Extracts author-paper facts (method names, datasets, metrics, tables, figures, numbers) into `author_evidence_index`.
-- Flags input anomalies (empty bibliography, missing source text, ambiguous citation style, conflicting numbers) in `input_warnings`.
+Read `/input/case.json` (`output_contract`) and `/input/task.md` verbatim immediately:
+- Satisfy **every** custom deliverable filename and top-level `result.json` field requested in `output_contract`.
+- `inspect_materials.py` parses `.bib`, `.ris`, `.json`, `.jsonl`, `.md`, `.txt`, `.csv`, `.tex`, `.docx`, and `.pdf` into `literature_inventory` and `author_evidence_index`, while `audit_and_compile_intro.py` also auto-exports verified `references_cited.md` and `references_cited.bib`.
 
 ### Step 2 — Construct Structured Writing Plan (`/app/work/writing_plan.json`)
 Following `templates/writing_plan_schema.json` and `resources/comparison_taxonomy.json`, author a structured JSON plan *before* final compilation:

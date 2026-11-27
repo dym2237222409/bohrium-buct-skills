@@ -381,6 +381,28 @@ def main() -> int:
     (out_dir / "parameter_table.md").write_text(param_md, encoding="utf-8")
     (out_dir / "reproducibility_and_questions.md").write_text(repro_md, encoding="utf-8")
 
+    # Also export publication-ready booktabs LaTeX parameter table
+    def _tex_esc(s: str) -> str:
+        return str(s).replace("\\", "\\textbackslash ").replace("_", "\\_").replace("%", "\\%").replace("&", "\\&")
+
+    tex_tbl = [
+        "% Auto-generated booktabs parameter table from scipdf-methods-experiments-writer",
+        "\\begin{table}[htbp]",
+        "\\centering",
+        "\\caption{Experimental Parameters and Source Provenance}",
+        "\\begin{tabular}{lllll}",
+        "\\toprule",
+        "Parameter & Value & Unit & Target & Source \\\\",
+        "\\midrule",
+    ]
+    for p in plan.get("parameter_table", []):
+        tex_tbl.append(
+            f"{_tex_esc(p.get('name', ''))} & {_tex_esc(p.get('value', ''))} & {_tex_esc(p.get('unit', '-'))} & "
+            f"{_tex_esc(p.get('target_component', ''))} & {_tex_esc(p.get('source_locator', ''))} \\\\"
+        )
+    tex_tbl.extend(["\\bottomrule", "\\end{tabular}", "\\end{table}", ""])
+    (out_dir / "parameter_table.tex").write_text("\n".join(tex_tbl), encoding="utf-8")
+
     tex_name = None
     if plan.get("target_format") in {"latex", "both"}:
         tex_name = "methods_and_experiments.tex"

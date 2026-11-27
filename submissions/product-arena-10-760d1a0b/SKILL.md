@@ -54,11 +54,16 @@ Read `/app/work/corpus_index.json`, `/input/case.json`, and `/input/task.md`:
 - Verify every independent paper's `source_id`, `doi`, `title`, `authors`, `license`, and `location_type` (`jats_paragraph_id` vs `pdf_page_bbox`).
 - **CRITICAL**: Never apply root `case.json` DOI/title/authors to a secondary paper, and never invent `page: 1` when `location_type == "jats_paragraph_id"`. If `secondary-publisher.xml` is provided for inline formula/subscript cross-checking, inspect it directly when reading formula-heavy passages.
 
-### Step 2 — Extract Paper 1 KG & Incrementally Merge Paper 2+
+### Step 2 — Extract Rich, High-Coverage Paper 1 KG & Incrementally Merge Paper 2+
+
+**CRITICAL — Satisfy `output_contract` & Aim for High Coverage + Strict Grounding**:
+- Read `/input/case.json`'s `output_contract` and `/input/task.md` verbatim before drafting; satisfy every requested deliverable file name and top-level `result.json` key.
+- Build a **comprehensive, decision-useful graph** (typically 15–40 grounded nodes and 20–60 typed directed edges across methods, materials/samples, datasets/cohorts, metrics, conditions, and findings—not a minimal 4-node toy graph!).
 
 Author `/app/work/kg_primary_draft.json` (and `/app/work/kg_secondary_draft.json` for Paper 2, following `templates/kg_draft_schema.json` and `resources/alignment_policy.json`):
 - Keep general concepts (`Concept_Term`, `is_paper_specific_instance: false`) cleanly separated from paper-specific physical samples, experimental runs, model checkpoints, or datasets (`is_paper_specific_instance: true`), connecting instances to concepts via `INSTANCE_OF`.
 - Explicitly document BOTH merged concepts AND **do-not-merge** decisions (distinct conditions, samples, homonyms, conflicting outcomes) in `alignment_decisions`.
+- Verify `kg_preview.svg` AND `kg_preview.png` (automatically rendered via `matplotlib`/`cairosvg`/`rsvg-convert`/`Pillow` fallback) are present in `/app/output/`.
 
 Build Paper 1 first, then incrementally merge Paper 2 while preserving Paper-1 node IDs:
 

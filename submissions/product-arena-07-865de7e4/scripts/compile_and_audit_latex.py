@@ -381,12 +381,50 @@ def main() -> int:
 
     compiled_pdf_rel: Optional[str] = None
     preview_images: List[str] = []
+    pdf_text_audit: Dict[str, Any] = {"checked": False, "page_count": None, "unresolved_question_marks": 0, "char_count": 0}
     if compile_result["pdf_path"] and compile_result["pdf_path"].exists():
         pdf_rel = compile_result["pdf_path"].relative_to(work_dir).as_posix()
         compiled_pdf_rel = pdf_rel
         preview_images, preview_warn = render_pdf_previews(out_dir / pdf_rel, out_dir / "previews", env_tools)
         if preview_warn:
             uncertainties.append({"item": preview_warn, "action_needed": "Inspect compiled PDF directly or install poppler/pdftoppm."})
+        # Verify compiled PDF text is non-empty and free of leftover '??' / '[?]' unresolved reference markers
+        pdf_txt = ""
+        try:
+            import fitz as _fitz  # type: ignore
+            _doc = _fitz.open(str(out_dir / pdf_rel))
+            pdf_text_audit["page_count"] = len(_doc)
+            pdf_txt = "\n".join(pg.get_text("text") for pg in _doc)
+            _doc.close()
+            pdf_text_audit["checked"] = True
+        except Exception:
+            if env_tools.get("pdftotext", {}).get("available"):
+                try:
+                    _p = subprocess.run(["pdftotext", str(out_dir / pdf_rel), "-"], capture_output=True, text=True, timeout=30, check=False)
+                    if _p.returncode == 0:
+                        pdf_txt = _p.stdout
+                        pdf_text_audit["checked"] = True
+                except Exception:
+                    pass
+        if pdf_text_audit["checked"]:
+            pdf_text_audit["char_count"] = len(pdf_txt.strip())
+            qmarks = len(re.findall(r"\[\?\]|\?\?", pdf_txt))
+            pdf_text_audit["unresolved_question_marks"] = qmarks
+            if qmarks > 0:
+                uncertainties.append({
+                    "item": f"Compiled PDF text still contains {qmarks} unresolved '??'/'[?]' citation or reference marker(s).",
+                    "action_needed": "Verify \\cite/\\ref keys and re-run bibtex/biber + latex passes.",
+                })
+
+    # Probe installed CJK fonts if CJK content was detected (helps agent fix xelatex font errors in 1 step)
+    installed_cjk_fonts: List[str] = []
+    if static_after.get("has_cjk") and shutil.which("fc-list"):
+        try:
+            _fc = subprocess.run(["fc-list", ":lang=zh", "family"], capture_output=True, text=True, timeout=10, check=False)
+            if _fc.returncode == 0:
+                installed_cjk_fonts = sorted({ln.split(",")[0].strip() for ln in _fc.stdout.splitlines() if ln.strip()})[:20]
+        except Exception:
+            pass
 
     # Compute unified diff against original /input
     diff_text, change_records = compute_unified_diff(input_dir, work_dir)
@@ -433,6 +471,8 @@ def main() -> int:
             "issues": static_after["static_issues"],
         },
         "preview_images": preview_images,
+        "pdf_text_audit": pdf_text_audit,
+        "installed_cjk_fonts": installed_cjk_fonts,
         "output_hashes_sha256": output_hashes,
     }
     (out_dir / "build_manifest.json").write_text(json.dumps(build_manifest, ensure_ascii=False, indent=2), encoding="utf-8")

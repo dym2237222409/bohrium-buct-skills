@@ -460,6 +460,26 @@ def main() -> int:
     (out_dir / "comparison_matrix.md").write_text(matrix_md, encoding="utf-8")
     (out_dir / "review_checklist.md").write_text(checklist_md, encoding="utf-8")
 
+    # Auto-export verified cited references list (.md + .bib) so the manuscript is drop-in publication-ready
+    cited_objs = [ref_map[k] for k in audit["verified_refs_used"] if k in ref_map]
+    ref_md_lines = ["# Verified Cited References", ""]
+    bib_blocks: List[str] = []
+    for idx_r, r in enumerate(cited_objs, start=1):
+        ref_md_lines.append(
+            f"[{idx_r}] {r.get('authors') or '[Author Missing]'} ({r.get('year') or 'n.d.'}). "
+            f"{r.get('title') or '[Title Missing]'}. {r.get('venue') or ''}"
+            + (f" DOI: {r['doi']}." if r.get("doi") else "")
+            + f" (`{r['ref_id']}`)"
+        )
+        bib_lines = [f"@{r.get('entry_type') or 'article'}{{{r['ref_id']},"]
+        for bf, rk in (("author", "authors"), ("title", "title"), ("journal", "venue"), ("year", "year"), ("doi", "doi")):
+            if r.get(rk):
+                bib_lines.append(f"  {bf} = {{{r[rk]}}},")
+        bib_lines.append("}")
+        bib_blocks.append("\n".join(bib_lines))
+    (out_dir / "references_cited.md").write_text("\n\n".join(ref_md_lines) + "\n", encoding="utf-8")
+    (out_dir / "references_cited.bib").write_text("\n\n".join(bib_blocks) + ("\n" if bib_blocks else ""), encoding="utf-8")
+
     manuscript_tex_name = None
     if plan.get("target_format") in {"latex", "both"} or manifest.get("citation_style") == "latex-cite":
         tex_body = (

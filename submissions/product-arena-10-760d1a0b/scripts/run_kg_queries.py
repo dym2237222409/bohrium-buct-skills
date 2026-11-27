@@ -136,17 +136,71 @@ def execute_query(kg: Dict[str, Any], qspec: Dict[str, Any]) -> Dict[str, Any]:
     return {"query_id": qid, "kind": kind, "status": "unsupported_query_kind", "subgraph": {"nodes": [], "edges": []}, "evidence": []}
 
 
+def build_auto_queries(kg: Dict[str, Any]) -> List[Dict[str, Any]]:
+    nodes = kg.get("nodes", [])
+    edges = kg.get("edges", [])
+    deg: Dict[str, int] = collections.Counter()
+    for e in edges:
+        deg[e["source_node_id"]] += 1
+        deg[e["target_node_id"]] += 1
+    ranked = sorted(nodes, key=lambda n: (-deg[n["node_id"]], n["node_id"]))
+    queries: List[Dict[str, Any]] = []
+    if ranked:
+        hub = ranked[0]
+        queries.append({
+            "query_id": "Q1_HUB_NEIGHBORHOOD",
+            "kind": "entity_neighborhood",
+            "entity_query": hub["canonical_name"],
+            "description": f"1-hop evidence-grounded neighborhood of highest-degree hub '{hub['canonical_name']}'.",
+        })
+    queries.append({
+        "query_id": "Q2_CROSS_PAPER_OVERLAP",
+        "kind": "cross_paper_comparison",
+        "min_distinct_sources": 2,
+        "description": "Compare aligned conceptual nodes corroborated across >= 2 distinct papers.",
+    })
+    queries.append({
+        "query_id": "Q3_CONFLICT_CONDITION_AUDIT",
+        "kind": "conflict_and_condition_audit",
+        "description": "Audit opposing directed relations and compare holding conditions across papers/regimes.",
+    })
+    if len(ranked) >= 2:
+        queries.append({
+            "query_id": "Q4_EVIDENCE_PATH",
+            "kind": "shortest_evidence_path",
+            "from_entity": ranked[0]["canonical_name"],
+            "to_entity": ranked[-1]["canonical_name"],
+            "description": f"Shortest verified evidence path between '{ranked[0]['canonical_name']}' and '{ranked[-1]['canonical_name']}'.",
+        })
+    queries.append({
+        "query_id": "Q5_UNSUPPORTED_BOUNDARY",
+        "kind": "shortest_evidence_path",
+        "from_entity": ranked[0]["canonical_name"] if ranked else "unknown",
+        "to_entity": "__NON_EXISTENT_UNREPORTED_ENTITY__",
+        "description": "Negative boundary check verifying honest 'unverifiable_not_connected' reporting for absent entities.",
+    })
+    return queries
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Run executable Knowledge Graph queries and finalize result.json.")
     ap.add_argument("--kg-json", required=True)
-    ap.add_argument("--queries-json", required=True)
+    ap.add_argument("--queries-json", default=None, help="Optional queries JSON; if omitted or --auto-queries is set, generates >= 4 grounded queries automatically.")
+    ap.add_argument("--auto-queries", action="store_true")
     ap.add_argument("--case-json", default=None)
     ap.add_argument("--output-dir", required=True)
     args = ap.parse_args()
 
     kg = json.loads(Path(args.kg_json).read_text(encoding="utf-8"))
-    qdata = json.loads(Path(args.queries_json).read_text(encoding="utf-8"))
-    qlist = qdata.get("queries", qdata if isinstance(qdata, list) else [])
+    qlist: List[Dict[str, Any]] = []
+    if args.queries_json and Path(args.queries_json).is_file():
+        qdata = json.loads(Path(args.queries_json).read_text(encoding="utf-8"))
+        qlist = qdata.get("queries", qdata if isinstance(qdata, list) else [])
+    if args.auto_queries or len(qlist) < 3:
+        existing_ids = {q.get("query_id") for q in qlist}
+        for aq in build_auto_queries(kg):
+            if aq["query_id"] not in existing_ids:
+                qlist.append(aq)
 
     results = [execute_query(kg, qs) for qs in qlist]
     out_dir = Path(args.output_dir)
@@ -188,6 +242,7 @@ def main() -> int:
         "kg_cypher_path": str(out_dir / "knowledge_graph.cypher"),
         "kg_mermaid_path": str(out_dir / "knowledge_graph.mmd"),
         "kg_preview_svg_path": str(out_dir / "kg_preview.svg"),
+        "kg_preview_png_path": str(out_dir / "kg_preview.png") if (out_dir / "kg_preview.png").is_file() else None,
         "queries_report_path": str(qrep_p),
         "audit_report_path": str(out_dir / "kg_audit_report.md"),
         "graph_summary": kg["summary"],
